@@ -9,6 +9,7 @@ public class Recitation1App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        System.out.println("Hello World");
 
     }
 }
