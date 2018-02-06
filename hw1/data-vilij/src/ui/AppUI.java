@@ -29,6 +29,7 @@ public final class AppUI extends UITemplate {
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
         super(primaryStage, applicationTemplate);
+        textArea = new TextArea();
         this.applicationTemplate = applicationTemplate;
     }
 
