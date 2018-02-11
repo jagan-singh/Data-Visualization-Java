@@ -2,6 +2,7 @@ package vilij.templates;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -63,7 +64,6 @@ public class UITemplate implements UIComponent {
         this.windowHeight = manager.getPropertyValueAsInt(PropertyTypes.WINDOW_HEIGHT.name());
         this.applicationTitle = manager.getPropertyValue(PropertyTypes.TITLE.name());
         this.primaryStage = primaryStage;
-
         setResourcePaths(applicationTemplate);   // set the correct paths to all the required resources
         setToolBar(applicationTemplate);         // initialize the top toolbar
         setToolbarHandlers(applicationTemplate); // set the toolbar button handlers
@@ -81,8 +81,9 @@ public class UITemplate implements UIComponent {
 
     /** Initialization is not provided at the template-level, and must be implemented by a child class. */
     @Override
-    public void initialize() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(UI_NOT_INITIALIZABLE_FOR_TEMPLATES);
+    public void initialize() {
+
+
     }
 
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
@@ -135,6 +136,7 @@ public class UITemplate implements UIComponent {
 
         primaryScene = windowWidth < 1 || windowHeight < 1 ? new Scene(appPane)
                                                            : new Scene(appPane, windowWidth, windowHeight);
+
         primaryStage.getIcons().add(logo);
         primaryStage.setScene(primaryScene);
         primaryStage.show();

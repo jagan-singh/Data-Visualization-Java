@@ -3,11 +3,16 @@ package ui;
 import actions.AppActions;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
-
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.Scene;
+import javafx.scene.text.Text;
+import javafx.scene.chart.NumberAxis;
 /**
  * This is the application's user interface implementation.
  *
@@ -25,12 +30,23 @@ public final class AppUI extends UITemplate {
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
 
+   private HBox hbox ;
+   private  VBox vbox;
     public ScatterChart<Number, Number> getChart() { return chart; }
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
         super(primaryStage, applicationTemplate);
-        textArea = new TextArea();
         this.applicationTemplate = applicationTemplate;
+
+        NumberAxis xAxis = new NumberAxis();
+        NumberAxis yAxis = new NumberAxis();
+
+        chart = new ScatterChart<Number, Number>(xAxis,yAxis);
+        textArea = new TextArea();
+
+        displayButton = new Button("Display");
+
+
     }
 
     @Override
@@ -40,7 +56,7 @@ public final class AppUI extends UITemplate {
 
     @Override
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
-        // TODO for homework 1
+       super.setToolBar(applicationTemplate);
     }
 
     @Override
@@ -65,7 +81,12 @@ public final class AppUI extends UITemplate {
     }
 
     private void layout() {
-        // TODO for homework 1
+         hbox  = new HBox(10);
+         vbox = new VBox(10);
+         vbox.getChildren().addAll(new Text("Data File"),textArea,displayButton);
+         hbox.getChildren().addAll(vbox, chart);
+
+        appPane.getChildren().add(hbox);
     }
 
     private void setWorkspaceActions() {
