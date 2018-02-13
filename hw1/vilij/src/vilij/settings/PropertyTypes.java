@@ -28,6 +28,7 @@ public enum PropertyTypes {
     LOAD_ICON,
     EXIT_ICON,
     LOGO,
+    SCREENSHOT_ICON,
 
     /* tooltips for user interface buttons */
     NEW_TOOLTIP,
@@ -35,6 +36,7 @@ public enum PropertyTypes {
     SAVE_TOOLTIP,
     LOAD_TOOLTIP,
     EXIT_TOOLTIP,
+    SCREENSHOT_TOOLTIP,
 
     /* error titles (these reflect the type of error encountered */
     NOT_SUPPORTED_FOR_TEMPLATE_ERROR_TITLE,

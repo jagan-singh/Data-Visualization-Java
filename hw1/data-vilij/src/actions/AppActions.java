@@ -1,8 +1,9 @@
 package actions;
-
+import java.io.File;
 import vilij.components.ActionComponent;
+import vilij.components.ConfirmationDialog;
 import vilij.templates.ApplicationTemplate;
-
+import javafx.stage.FileChooser;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -25,7 +26,13 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleNewRequest() {
-        // TODO for homework 1
+
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TSD files (*.tsd)", "*.tsd");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+
+        applicationTemplate.getUIComponent().clear();
     }
 
     @Override
@@ -40,7 +47,7 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleExitRequest() {
-        // TODO for homework 1
+        System.exit(0);
     }
 
     @Override
