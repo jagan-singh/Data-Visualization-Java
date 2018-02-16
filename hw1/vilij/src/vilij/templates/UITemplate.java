@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import vilij.components.DataComponent;
 import vilij.components.UIComponent;
 import vilij.propertymanager.PropertyManager;
 import vilij.settings.PropertyTypes;
@@ -52,8 +51,6 @@ public class UITemplate implements UIComponent{
     protected Image   logo;             // the Vilij logo
     protected int     windowWidth;
     protected int     windowHeight;
-    protected Button screenbtn; //screen shot button
-    protected String screenpath;
 
     /**
      * Creates the minimal user interface to be used by a Vilij application. It uses the window height and width
@@ -85,8 +82,6 @@ public class UITemplate implements UIComponent{
     /** Initialization is not provided at the template-level, and must be implemented by a child class. */
     @Override
     public void initialize() {
-
-
     }
 
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
@@ -96,8 +91,7 @@ public class UITemplate implements UIComponent{
         loadButton = setToolbarButton(loadiconPath, manager.getPropertyValue(LOAD_TOOLTIP.name()), false);
         printButton = setToolbarButton(printiconPath, manager.getPropertyValue(PRINT_TOOLTIP.name()), true);
         exitButton = setToolbarButton(exiticonPath, manager.getPropertyValue(EXIT_TOOLTIP.name()), false);
-        screenbtn = setToolbarButton(screenpath, manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), true);
-        toolBar = new ToolBar(newButton, saveButton, loadButton, printButton, exitButton,screenbtn);
+        toolBar = new ToolBar(newButton, saveButton, loadButton, printButton, exitButton);
     }
 
     protected Button setToolbarButton(String iconPath, String tooltip, boolean disabled) {
@@ -120,8 +114,6 @@ public class UITemplate implements UIComponent{
         exiticonPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(EXIT_ICON.name()));
         printiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(PRINT_ICON.name()));
         logoPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(LOGO.name()));
-        screenpath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(SCREENSHOT_ICON.name()));
-
         cssPath = SEPARATOR + String.join(SEPARATOR,
                                           manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                           manager.getPropertyValue(CSS_RESOURCE_PATH.name()),

@@ -24,7 +24,6 @@ functionality within the main workspace. -->
         <property name="LOAD_ICON" value="load.png"/>
         <property name="EXIT_ICON" value="exit.png"/>
         <property name="LOGO" value="logo.png"/>
-        <property name="SCREENSHOT_ICON" value="screenshot.png"/>
 
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="NEW_TOOLTIP" value="Create new data"/>
@@ -33,7 +32,6 @@ functionality within the main workspace. -->
                   value="Print visualization"/> <!-- will save original image to a file, irrespective of zoom in/out view -->
         <property name="SAVE_TOOLTIP" value="Save current data"/>
         <property name="EXIT_TOOLTIP" value="Exit application"/>
-        <property name="SCREENSHOT_TOOLTIP" value="Take a Screenshot"/>
 
         <!-- ERROR TITLES -->
         <property name="NOT_SUPPORTED_FOR_TEMPLATE_ERROR_TITLE" value="Operation Not Supported for Templates"/>

@@ -1,7 +1,12 @@
 package actions;
+
+import java.awt.*;
 import java.io.File;
+import java.io.FileWriter;
+import ui.AppUI;
 import vilij.components.ActionComponent;
 import vilij.components.ConfirmationDialog;
+import vilij.components.Dialog;
 import vilij.templates.ApplicationTemplate;
 import javafx.stage.FileChooser;
 import java.io.IOException;
@@ -12,7 +17,7 @@ import java.nio.file.Path;
  *
  * @author Ritwik Banerjee
  */
-public final class AppActions implements ActionComponent {
+public final class AppActions implements ActionComponent  {
 
     /** The application to which this class of actions belongs. */
     private ApplicationTemplate applicationTemplate;
@@ -20,17 +25,13 @@ public final class AppActions implements ActionComponent {
     /** Path to the data file currently active. */
     Path dataFilePath;
 
-    public AppActions(ApplicationTemplate applicationTemplate) {
+    public AppActions(ApplicationTemplate applicationTemplate)
+    {
         this.applicationTemplate = applicationTemplate;
     }
 
     @Override
-    public void handleNewRequest() {
-
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TSD files (*.tsd)", "*.tsd");
-        fileChooser.getExtensionFilters().add(extFilter);
-
+    public void handleNewRequest()   {
 
         applicationTemplate.getUIComponent().clear();
     }
@@ -47,7 +48,16 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleExitRequest() {
-        System.exit(0);
+        AppUI ui = (AppUI)applicationTemplate.getUIComponent();
+        if(!ui.getTextArea().equals("")) {
+            ConfirmationDialog confirm = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
+            confirm.show("EXIT_WHILE_RUNNING_WARNING", "An algorithm is running. If you exit now, all unsaved changes will be lost. Are you sure?");
+            if (confirm.getSelectedOption() == ConfirmationDialog.Option.YES)
+                System.exit(0);
+            else
+                confirm.close();
+        }else
+            System.exit(0);
     }
 
     @Override
@@ -72,8 +82,31 @@ public final class AppActions implements ActionComponent {
      * @return <code>false</code> if the user presses the <i>cancel</i>, and <code>true</code> otherwise.
      */
     private boolean promptToSave() throws IOException {
-        // TODO for homework 1
-        // TODO remove the placeholder line below after you have implemented this method
-        return false;
+        ConfirmationDialog confirm = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
+        confirm.show("SAVE","Do you want to save the text? ");
+        if(confirm.getSelectedOption() == ConfirmationDialog.Option.CANCEL)
+        {
+            confirm.close();
+            return false;
+        }
+        else {
+            if(confirm.getSelectedOption() == ConfirmationDialog.Option.YES)
+            {
+                FileChooser fileChooser = new FileChooser();
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TSD files (*.tsd)", "*.tsd");
+                fileChooser.getExtensionFilters().add(extFilter);
+
+                File file = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+
+                FileWriter writer = new FileWriter(file);
+                AppUI ui = (AppUI)applicationTemplate.getUIComponent();
+                writer.write(ui.getTextArea());
+            }
+            else
+                {
+
+                }
+                return true;
+        }
     }
 }
