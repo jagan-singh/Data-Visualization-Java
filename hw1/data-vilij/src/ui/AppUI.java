@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import settings.AppPropertyTypes;
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
+import vilij.propertymanager.PropertyManager;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 import javafx.scene.layout.VBox;
@@ -17,6 +18,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.chart.NumberAxis;
 import java.io.IOException;
+
+import static settings.AppPropertyTypes.SCREENSHOT_ICON;
+import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
+import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 
 /**
  * This is the application's user interface implementation.
@@ -62,16 +67,18 @@ public final class AppUI extends UITemplate {
     @Override
     protected void setResourcePaths(ApplicationTemplate applicationTemplate) {
         super.setResourcePaths(applicationTemplate);
-        //String iconsPath = "/" + String.join("/", AppPropertyTypes.DATA_RESOURCE_PATH.SCREENSHOT_ICON.name()) ;
-      //scrnpath = "/"+  String.join("/", AppPropertyTypes.DATA_RESOURCE_PATH.SCREENSHOT_ICON.name());
+        PropertyManager manager = applicationTemplate.manager;
+        String iconsPath = "/" + String.join("/", manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                manager.getPropertyValue(ICONS_RESOURCE_PATH.name())) ;
+      scrnpath = String.join("/",iconsPath, manager.getPropertyValue(SCREENSHOT_ICON.name()));
 
     }
 
     @Override
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
         super.setToolBar(applicationTemplate);
-        //scrnshotButton = setToolbarButton(scrnpath, AppPropertyTypes.DATA_RESOURCE_PATH.SCREENSHOT_TOOLTIP.name() , true);
-        //toolBar.getItems().add(scrnshotButton);
+        scrnshotButton = setToolbarButton(scrnpath, "screenshot.png" , true);
+        toolBar.getItems().add(scrnshotButton);
 
     }
 
@@ -93,13 +100,14 @@ public final class AppUI extends UITemplate {
         loadButton.setOnAction(e -> applicationTemplate.getActionComponent().handleLoadRequest());
         exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
         printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
-       /*scrnshotButton.setOnAction(e -> {
+       scrnshotButton.setOnAction(e -> {
             try {
                 ((AppActions)applicationTemplate.getActionComponent()).handleScreenshotRequest();
             } catch (IOException e1) {
-                e1.printStackTrace();
+                ErrorDialog dialog =  (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                dialog.show(AppPropertyTypes.DATA_RESOURCE_PATH.RESOURCE_SUBDIR_NOT_FOUND.name(),e1.getMessage());
             }
-        });*/
+        });
     }
 
     @Override
