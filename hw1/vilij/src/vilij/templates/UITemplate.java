@@ -107,7 +107,6 @@ public class UITemplate implements UIComponent{
         String iconsPath = SEPARATOR + String.join(SEPARATOR,
                                                    manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                                    manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
-
         newiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(NEW_ICON.name()));
         saveiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(SAVE_ICON.name()));
         loadiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(LOAD_ICON.name()));
@@ -118,7 +117,6 @@ public class UITemplate implements UIComponent{
                                           manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                           manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
                                           manager.getPropertyValue(CSS_RESOURCE_FILENAME.name()));
-
         logo = new Image(getClass().getResourceAsStream(logoPath));
     }
 
@@ -130,10 +128,8 @@ public class UITemplate implements UIComponent{
         primaryStage.setResizable(applicationTemplate.manager.getPropertyValueAsBoolean(IS_WINDOW_RESIZABLE.name()));
         appPane = new VBox(5);
         appPane.getChildren().add(toolBar);
-
         primaryScene = windowWidth < 1 || windowHeight < 1 ? new Scene(appPane)
                                                            : new Scene(appPane, windowWidth, windowHeight);
-
         primaryStage.getIcons().add(logo);
         primaryStage.setScene(primaryScene);
         primaryStage.show();

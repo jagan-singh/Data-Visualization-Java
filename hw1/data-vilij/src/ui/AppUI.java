@@ -2,40 +2,28 @@ package ui;
 
 import actions.AppActions;
 import dataprocessors.AppData;
-import dataprocessors.TSDProcessor;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.ToolBar;
 import javafx.stage.Stage;
-import vilij.components.ConfirmationDialog;
-import vilij.components.DataComponent;
+import settings.AppPropertyTypes;
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
-import vilij.propertymanager.PropertyManager;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static vilij.settings.PropertyTypes.*;
 
 /**
  * This is the application's user interface implementation.
  *
  * @author Ritwik Banerjee
  */
+
 public final class AppUI extends UITemplate {
 
     /**
@@ -74,18 +62,17 @@ public final class AppUI extends UITemplate {
     @Override
     protected void setResourcePaths(ApplicationTemplate applicationTemplate) {
         super.setResourcePaths(applicationTemplate);
-        PropertyManager manager = applicationTemplate.manager;
-        //String scrnpath = manager.getPropertyValue() + manager.getPropertyValue(ICONS_RESOURCE_PATH.name());
+        //String iconsPath = "/" + String.join("/", AppPropertyTypes.DATA_RESOURCE_PATH.SCREENSHOT_ICON.name()) ;
+      //scrnpath = "/"+  String.join("/", AppPropertyTypes.DATA_RESOURCE_PATH.SCREENSHOT_ICON.name());
 
-        //scrnpath = String.join( scrnpath, manager.getPropertyValue(SCREENSHOT_ICON.name()));
     }
 
     @Override
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
         super.setToolBar(applicationTemplate);
-        PropertyManager manager = applicationTemplate.manager;
-       // scrnshotButton = setToolbarButton(scrnpath, manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), false);
+        //scrnshotButton = setToolbarButton(scrnpath, AppPropertyTypes.DATA_RESOURCE_PATH.SCREENSHOT_TOOLTIP.name() , true);
         //toolBar.getItems().add(scrnshotButton);
+
     }
 
     @Override
@@ -95,14 +82,18 @@ public final class AppUI extends UITemplate {
             try {
                 applicationTemplate.getActionComponent().handleNewRequest();
             } catch (IOException e1) {
-                e1.printStackTrace();
+                ErrorDialog dialog =  (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                dialog.show(AppPropertyTypes.DATA_RESOURCE_PATH.RESOURCE_SUBDIR_NOT_FOUND.name(),e1.getMessage());
+            }catch (NullPointerException n){
+                ErrorDialog dialog =  (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                dialog.show("Null Pointer Exception","No response chosen");
             }
         });
         saveButton.setOnAction(e -> applicationTemplate.getActionComponent().handleSaveRequest());
         loadButton.setOnAction(e -> applicationTemplate.getActionComponent().handleLoadRequest());
         exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
         printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
-       /* scrnshotButton.setOnAction(e -> {
+       /*scrnshotButton.setOnAction(e -> {
             try {
                 ((AppActions)applicationTemplate.getActionComponent()).handleScreenshotRequest();
             } catch (IOException e1) {

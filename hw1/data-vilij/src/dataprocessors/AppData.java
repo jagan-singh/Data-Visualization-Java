@@ -30,7 +30,6 @@ public class AppData implements DataComponent {
     public void loadData(String dataString) throws Exception {
         processor.processString(dataString);
         displayData();
-
     }
 
     @Override
