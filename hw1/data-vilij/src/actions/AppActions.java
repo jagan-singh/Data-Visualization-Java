@@ -1,8 +1,14 @@
 package actions;
 
+import java.io.File;
+import java.io.FileWriter;
+import settings.AppPropertyTypes;
+import ui.AppUI;
 import vilij.components.ActionComponent;
+import vilij.components.ConfirmationDialog;
+import vilij.components.Dialog;
 import vilij.templates.ApplicationTemplate;
-
+import javafx.stage.FileChooser;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -11,21 +17,38 @@ import java.nio.file.Path;
  *
  * @author Ritwik Banerjee
  */
-public final class AppActions implements ActionComponent {
+
+public final class AppActions implements ActionComponent  {
 
     /** The application to which this class of actions belongs. */
     private ApplicationTemplate applicationTemplate;
+    private boolean flag;
 
     /** Path to the data file currently active. */
     Path dataFilePath;
 
-    public AppActions(ApplicationTemplate applicationTemplate) {
+    public AppActions(ApplicationTemplate applicationTemplate)
+    {
         this.applicationTemplate = applicationTemplate;
+        flag = false;
     }
 
     @Override
-    public void handleNewRequest() {
-        // TODO for homework 1
+    public void handleNewRequest() throws IOException  {
+        if(promptToSave() && flag) {
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TSD files (*.tsd)", "*.tsd");
+            fileChooser.getExtensionFilters().add(extFilter);
+            File file = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+            FileWriter writer = new FileWriter(file);
+            AppUI ui = (AppUI) applicationTemplate.getUIComponent();
+            writer.write(ui.getTextArea());
+            writer.close();
+            applicationTemplate.getUIComponent().clear();
+        }
+        if(!flag)
+            applicationTemplate.getUIComponent().clear();
+
     }
 
     @Override
@@ -40,7 +63,16 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleExitRequest() {
-        // TODO for homework 1
+        AppUI ui = (AppUI)applicationTemplate.getUIComponent();
+        if(!ui.getTextArea().equals("")) {
+            ConfirmationDialog confirm = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
+            confirm.show("EXIT_WHILE_RUNNING_WARNING", "An algorithm is running. If you exit now, all unsaved changes will be lost. Are you sure?");
+            if (confirm.getSelectedOption() == ConfirmationDialog.Option.YES)
+                System.exit(0);
+            else
+                confirm.close();
+        }else
+            System.exit(0);
     }
 
     @Override
@@ -64,9 +96,21 @@ public final class AppActions implements ActionComponent {
      *
      * @return <code>false</code> if the user presses the <i>cancel</i>, and <code>true</code> otherwise.
      */
-    private boolean promptToSave() throws IOException {
-        // TODO for homework 1
-        // TODO remove the placeholder line below after you have implemented this method
-        return false;
+    private boolean promptToSave() {
+        ConfirmationDialog confirm = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
+        confirm.show(AppPropertyTypes.DATA_RESOURCE_PATH.SAVE_UNSAVED_WORK.name(),"Would you like to save current work?");
+            if(confirm.getSelectedOption() == ConfirmationDialog.Option.CANCEL) {
+                confirm.close();
+                flag = true;
+                return false;
+            }
+            else{
+                if(confirm.getSelectedOption() == ConfirmationDialog.Option.NO)
+                    flag = false;
+                else if(confirm.getSelectedOption() == ConfirmationDialog.Option.YES)
+                    flag = true;
+            }
+              return true;
+        }
     }
-}
+

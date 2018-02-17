@@ -1,5 +1,7 @@
 package vilij.components;
 
+import java.io.IOException;
+
 /**
  * Defines the behavior of the core actions to be handled by an application.
  *
@@ -7,7 +9,7 @@ package vilij.components;
  */
 public interface ActionComponent {
 
-    void handleNewRequest();
+    void handleNewRequest() throws IOException;
 
     void handleSaveRequest();
 

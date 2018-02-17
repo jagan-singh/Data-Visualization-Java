@@ -1,8 +1,8 @@
 package vilij.templates;
 
+
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -23,7 +23,7 @@ import static vilij.settings.PropertyTypes.*;
  *
  * @author Ritwik Banerjee
  */
-public class UITemplate implements UIComponent {
+public class UITemplate implements UIComponent{
 
     private static final String SEPARATOR = "/";
     private static final String UI_NOT_INITIALIZABLE_FOR_TEMPLATES = "The graphical user interface cannot be " +
@@ -82,8 +82,6 @@ public class UITemplate implements UIComponent {
     /** Initialization is not provided at the template-level, and must be implemented by a child class. */
     @Override
     public void initialize() {
-
-
     }
 
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
@@ -109,19 +107,16 @@ public class UITemplate implements UIComponent {
         String iconsPath = SEPARATOR + String.join(SEPARATOR,
                                                    manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                                    manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
-
         newiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(NEW_ICON.name()));
         saveiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(SAVE_ICON.name()));
         loadiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(LOAD_ICON.name()));
         exiticonPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(EXIT_ICON.name()));
         printiconPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(PRINT_ICON.name()));
         logoPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(LOGO.name()));
-
         cssPath = SEPARATOR + String.join(SEPARATOR,
                                           manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                           manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
                                           manager.getPropertyValue(CSS_RESOURCE_FILENAME.name()));
-
         logo = new Image(getClass().getResourceAsStream(logoPath));
     }
 
@@ -131,12 +126,10 @@ public class UITemplate implements UIComponent {
     protected void setWindow(ApplicationTemplate applicationTemplate) {
         primaryStage.setTitle(applicationTitle);
         primaryStage.setResizable(applicationTemplate.manager.getPropertyValueAsBoolean(IS_WINDOW_RESIZABLE.name()));
-        appPane = new VBox();
+        appPane = new VBox(5);
         appPane.getChildren().add(toolBar);
-
         primaryScene = windowWidth < 1 || windowHeight < 1 ? new Scene(appPane)
                                                            : new Scene(appPane, windowWidth, windowHeight);
-
         primaryStage.getIcons().add(logo);
         primaryStage.setScene(primaryScene);
         primaryStage.show();
@@ -149,5 +142,7 @@ public class UITemplate implements UIComponent {
     public void clear() {
         /* squelch */
     }
+
+
 
 }
