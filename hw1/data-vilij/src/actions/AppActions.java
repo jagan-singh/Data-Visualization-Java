@@ -1,7 +1,6 @@
 package actions;
 
 import java.io.File;
-import java.io.FileWriter;
 import settings.AppPropertyTypes;
 import ui.AppUI;
 import vilij.components.ActionComponent;
@@ -11,6 +10,19 @@ import vilij.templates.ApplicationTemplate;
 import javafx.stage.FileChooser;
 import java.io.IOException;
 import java.nio.file.Path;
+import javafx.beans.property.SimpleBooleanProperty;
+import vilij.propertymanager.PropertyManager;
+import javafx.stage.FileChooser.ExtensionFilter;
+import vilij.components.ErrorDialog;
+import vilij.settings.PropertyTypes;
+import static vilij.settings.PropertyTypes.SAVE_WORK_TITLE;
+import java.net.URL;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import javafx.scene.image.WritableImage;
+import javafx.scene.SnapshotParameters;
+import javax.imageio.ImageIO;
+import javafx.embed.swing.SwingFXUtils;
 
 /**
  * This is the concrete implementation of the action handlers required by the application.
@@ -22,57 +34,93 @@ public final class AppActions implements ActionComponent  {
 
     /** The application to which this class of actions belongs. */
     private ApplicationTemplate applicationTemplate;
-    private boolean flag;
 
     /** Path to the data file currently active. */
     Path dataFilePath;
+    SimpleBooleanProperty isUnsaved;
+    private int numsave = 0;
 
     public AppActions(ApplicationTemplate applicationTemplate)
     {
         this.applicationTemplate = applicationTemplate;
-        flag = false;
+        this.isUnsaved = new SimpleBooleanProperty(false);
     }
 
-    @Override
-    public void handleNewRequest() throws IOException  {
-        if(promptToSave() && flag) {
-            FileChooser fileChooser = new FileChooser();
-            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TSD files (*.tsd)", "*.tsd");
-            fileChooser.getExtensionFilters().add(extFilter);
-            File file = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
-            FileWriter writer = new FileWriter(file);
-            AppUI ui = (AppUI) applicationTemplate.getUIComponent();
-            writer.write(ui.getTextArea());
-            writer.close();
-            applicationTemplate.getUIComponent().clear();
-        }
-        if(!flag)
-            applicationTemplate.getUIComponent().clear();
+    public void setIsUnsavedProperty(boolean property) { isUnsaved.set(property); }
 
+    public boolean getIsUnsavedProperty(){ return isUnsaved.get(); }
+
+    @Override
+    public void handleNewRequest() {
+        try {
+            if (!isUnsaved.get() || promptToSave()) {
+                applicationTemplate.getDataComponent().clear();
+                applicationTemplate.getUIComponent().clear();
+                isUnsaved.set(false);
+                dataFilePath = null;
+                numsave = 0;
+            }
+        } catch (IOException e) { errorHandlingHelper(); }
     }
 
     @Override
     public void handleSaveRequest() {
-        // TODO: NOT A PART OF HW 1
-    }
+        if(numsave == 0) {
+            File selected = fchooser().showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+            if (selected != null) {
+                dataFilePath = selected.toPath();
+                save();
+            }
+        }
+        else if(numsave >= 1)
+                save();
+        numsave++;
+        }
+
 
     @Override
     public void handleLoadRequest() {
-        // TODO: NOT A PART OF HW 1
+        AppUI ui = (AppUI)applicationTemplate.getUIComponent();
+        try {
+            if (!ui.getTextArea().equals("")) {
+                promptToSave();
+            }
+        }
+        catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+        File file = fchooser().showOpenDialog(null);
+        if (file != null) {
+            try {
+            Scanner scanner = new Scanner(file);
+            String lines = "";
+            int num = 0;
+            while (scanner.hasNextLine()) {
+                lines += scanner.nextLine() + '\n';
+                num++;
+            }
+                if (ui.checkText(lines)) {
+                if(num > 10) {
+                    ErrorDialog dialog = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                    PropertyManager manager = applicationTemplate.manager;
+                    dialog.show("Loaded Data","Loaded data consists of " + num +" lines. Showing the first 10 lines in the text area.");
+                }
+                    ui.setTextArea(lines);
+                }
+            scanner.close();
+            } catch (FileNotFoundException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
     }
 
     @Override
     public void handleExitRequest() {
-        AppUI ui = (AppUI)applicationTemplate.getUIComponent();
-        if(!ui.getTextArea().equals("")) {
-            ConfirmationDialog confirm = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
-            confirm.show("EXIT_WHILE_RUNNING_WARNING", "An algorithm is running. If you exit now, all unsaved changes will be lost. Are you sure?");
-            if (confirm.getSelectedOption() == ConfirmationDialog.Option.YES)
+        try {
+            if (!isUnsaved.get() || promptToSave())
                 System.exit(0);
-            else
-                confirm.close();
-        }else
-            System.exit(0);
+        } catch (IOException e) { errorHandlingHelper(); }
     }
 
     @Override
@@ -81,7 +129,25 @@ public final class AppActions implements ActionComponent  {
     }
 
     public void handleScreenshotRequest() throws IOException {
-        // TODO: NOT A PART OF HW 1
+        WritableImage image = ((AppUI)applicationTemplate.getUIComponent()).getChart().snapshot(new SnapshotParameters(), null);
+        PropertyManager manager = applicationTemplate.manager;
+        FileChooser fileChooser = new FileChooser();
+        String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+        URL         dataDirURL  = getClass().getResource(dataDirPath);
+        fileChooser.setInitialDirectory(new File(dataDirURL.getFile()));
+        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
+        FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
+        fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterPNG);
+        File selected = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+        if (selected != null) {
+            dataFilePath = selected.toPath();
+            save();
+        }
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", selected);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     /**
@@ -96,21 +162,70 @@ public final class AppActions implements ActionComponent  {
      *
      * @return <code>false</code> if the user presses the <i>cancel</i>, and <code>true</code> otherwise.
      */
-    private boolean promptToSave() {
-        ConfirmationDialog confirm = (ConfirmationDialog) applicationTemplate.getDialog(Dialog.DialogType.CONFIRMATION);
-        confirm.show(AppPropertyTypes.DATA_RESOURCE_PATH.SAVE_UNSAVED_WORK.name(),"Would you like to save current work?");
-            if(confirm.getSelectedOption() == ConfirmationDialog.Option.CANCEL) {
-                confirm.close();
-                flag = true;
-                return false;
-            }
-            else{
-                if(confirm.getSelectedOption() == ConfirmationDialog.Option.NO)
-                    flag = false;
-                else if(confirm.getSelectedOption() == ConfirmationDialog.Option.YES)
-                    flag = true;
-            }
-              return true;
+    private boolean promptToSave() throws IOException {
+        PropertyManager manager = applicationTemplate.manager;
+        ConfirmationDialog dialog = ConfirmationDialog.getDialog();
+        dialog.show(manager.getPropertyValue(AppPropertyTypes.SAVE_UNSAVED_WORK_TITLE.name()),
+                manager.getPropertyValue(AppPropertyTypes.SAVE_UNSAVED_WORK.name()));
+
+        if(dialog.getSelectedOption() == null) return false;
+
+        if (dialog.getSelectedOption().equals(ConfirmationDialog.Option.YES)) {
+            if (dataFilePath == null) {
+                FileChooser fileChooser = new FileChooser();
+                String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+                URL         dataDirURL  = getClass().getResource(dataDirPath);
+
+                if (dataDirURL == null)
+                    throw new FileNotFoundException(manager.getPropertyValue(AppPropertyTypes.RESOURCE_SUBDIR_NOT_FOUND.name()));
+
+                fileChooser.setInitialDirectory(new File(dataDirURL.getFile()));
+                fileChooser.setTitle(manager.getPropertyValue(SAVE_WORK_TITLE.name()));
+
+                String description = manager.getPropertyValue(AppPropertyTypes.DATA_FILE_EXT_DESC.name());
+                String extension   = manager.getPropertyValue(AppPropertyTypes.DATA_FILE_EXT.name());
+                ExtensionFilter extFilter = new ExtensionFilter(String.format("%s (.*%s)", description, extension),
+                        String.format("*.%s", extension));
+
+                fileChooser.getExtensionFilters().add(extFilter);
+                File selected = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+                if (selected != null) {
+                    dataFilePath = selected.toPath();
+                    save();
+                } else return false; // if user presses escape after initially selecting 'yes'
+            } else
+                save();
         }
+        return !dialog.getSelectedOption().equals(ConfirmationDialog.Option.CANCEL);
     }
+
+    private void save(){
+        applicationTemplate.getDataComponent().saveData(dataFilePath);
+        isUnsaved.set(false);
+    }
+
+    private void errorHandlingHelper() {
+        ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+        PropertyManager manager  = applicationTemplate.manager;
+        String          errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
+        String          errMsg   = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name());
+        String          errInput = manager.getPropertyValue(AppPropertyTypes.SPECIFIED_FILE.name());
+        dialog.show(errTitle, errMsg + errInput);
+    }
+
+   private FileChooser fchooser()
+   {
+       PropertyManager manager = applicationTemplate.manager;
+       FileChooser fileChooser = new FileChooser();
+       String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+       URL         dataDirURL  = getClass().getResource(dataDirPath);
+       fileChooser.setInitialDirectory(new File(dataDirURL.getFile()));
+       String description = manager.getPropertyValue(AppPropertyTypes.DATA_FILE_EXT_DESC.name());
+       String extension   = manager.getPropertyValue(AppPropertyTypes.DATA_FILE_EXT.name());
+       ExtensionFilter extFilter = new ExtensionFilter(String.format("%s (.*%s)", description, extension),
+               String.format("*.%s", extension));
+       fileChooser.getExtensionFilters().add(extFilter);
+       return fileChooser;
+   }
+}
 

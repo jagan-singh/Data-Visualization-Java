@@ -1,0 +1,40 @@
+.chart-plot-background {
+    -fx-border-color: Black;
+    -fx-border-style: solid;
+    -fx-border-width: 4px;
+    -fx-border-insets: 0 0 0 1;
+}
+
+.chart{
+    -fx-grid-lines-visible: true;
+    -fx-horizontal-grid-lines-visible: false;
+    -fx-vertical-grid-lines-visible: false;
+    -fx-font-size: 15px;
+}
+
+.chart-series-line {
+    -fx-stroke: transparent;
+}
+
+.axis Text{
+    -fx-fill: red;
+}
+
+.axis {
+    -fx-tick-length: 20;
+    -fx-minor-tick-length: 10;
+}
+
+.axis-tick-mark {
+    -fx-stroke: #637040;
+    -fx-stroke-width: 3;
+}
+
+.axis-minor-tick-mark {
+    -fx-stroke: #859656;
+    -fx-stroke-width: 2;
+}
+
+.scroll-pane {
+    -fx-vbar-policy: never;
+}

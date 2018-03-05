@@ -2,10 +2,13 @@ package dataprocessors;
 
 import javafx.geometry.Point2D;
 import javafx.scene.chart.XYChart;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 
 /**
  * The data files used by this data visualization applications follow a tab-separated format, where each data point is
@@ -30,6 +33,7 @@ public final class TSDProcessor {
 
     private Map<String, String>  dataLabels;
     private Map<String, Point2D> dataPoints;
+    private String ptname;
 
     public TSDProcessor() {
         dataLabels = new HashMap<>();
@@ -38,7 +42,6 @@ public final class TSDProcessor {
 
     /**
      * Processes the data and populated two {@link Map} objects with the data.
-     *
      * @param tsdString the input data provided as a single {@link String}
      * @throws Exception if the input string does not follow the <code>.tsd</code> data format
      */
@@ -66,12 +69,15 @@ public final class TSDProcessor {
     }
 
     /**
-     * Exports the data to the specified 2-D chart.
-     *
+     * Exports the data to the specified 2-D chart
      * @param chart the specified chart
      */
     void toChartData(XYChart<Number, Number> chart) {
+        Double yval = 0.0;
+        int counter = 0;
         Set<String> labels = new HashSet<>(dataLabels.values());
+        Set<String> keys = new HashSet<>(dataLabels.keySet());
+        String[] keyarray = keys.toArray(new String[dataLabels.size()]);
         for (String label : labels) {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             series.setName(label);
@@ -80,7 +86,32 @@ public final class TSDProcessor {
                 series.getData().add(new XYChart.Data<>(point.getX(), point.getY()));
             });
             chart.getData().add(series);
+            for (int i = 0; i < series.getData().size(); i++) {
+                Tooltip.install(series.getData().get(i).getNode(), new Tooltip(keyarray[i].substring(1)));
+                series.getData().get(i).getNode().setOnMouseEntered((MouseEvent event) -> {
+                    ((Node) (event.getSource())).setCursor(Cursor.HAND);
+                });
+                series.getData().get(i).getNode().setOnMouseExited((MouseEvent event) -> {
+                    ((Node) (event.getSource())).setCursor(Cursor.DEFAULT);
+                });
+                yval += (Double) series.getData().get(i).getYValue();
+                counter++;
+            }
         }
+        final Double yavg = yval / counter;
+        XYChart.Series<Number, Number> avgser = new XYChart.Series<>();
+        avgser.setName("Average Y");
+        for (String label : labels) {
+            dataLabels.entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
+                Point2D point = dataPoints.get(entry.getKey());
+                avgser.getData().add(new XYChart.Data<>(point.getX(), yavg));
+            });
+        }
+        chart.getData().add(avgser);
+
+        for(int i=0;i<avgser.getData().size();i++)
+           avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
+        avgser.getNode().setStyle("-fx-stroke: blue");
     }
 
     void clear() {
@@ -94,3 +125,4 @@ public final class TSDProcessor {
         return name;
     }
 }
+

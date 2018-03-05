@@ -27,6 +27,16 @@ public enum AppPropertyTypes {
     /* application-specific messages */
     SAVE_UNSAVED_WORK,
 
+    INVALID_FORMAT_TITLE,
+    INVALID_FORMAT,
+    DUPLICATES_TITLE,
+    DUPLICATES,
+    CHART_TITLE,
+    LEFT_PANE_TITLE,
+    LEFT_PANE_TITLEFONT,
+    LEFT_PANE_TITLESIZE,
+    DISPLAY_BUTTON_TEXT,
+
     /* application-specific parameters */
     DATA_FILE_EXT,
     DATA_FILE_EXT_DESC,
