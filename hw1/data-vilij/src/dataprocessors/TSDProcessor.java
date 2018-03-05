@@ -111,7 +111,7 @@ public final class TSDProcessor {
 
         for(int i=0;i<avgser.getData().size();i++)
            avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
-        avgser.getNode().setStyle("-fx-stroke: blue");
+        avgser.getNode().setStyle("-fx-stroke: red");
     }
 
     void clear() {

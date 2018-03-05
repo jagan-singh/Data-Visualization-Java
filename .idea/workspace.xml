@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="39e74a60-7b99-4e61-bfa0-7aed4f499a40" name="Default" comment="2">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml" afterPath="$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml" />
-      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java" afterPath="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java" />
-      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java" afterPath="$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java" />
-    </list>
+    <list default="true" id="39e74a60-7b99-4e61-bfa0-7aed4f499a40" name="Default" comment="2" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,12 +12,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="AppUI.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AppUI.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2619">
-              <caret line="21" column="30" lean-forward="false" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
+            <state relative-caret-position="326">
+              <caret line="165" column="52" lean-forward="false" selection-start-line="165" selection-start-column="52" selection-end-line="165" selection-end-column="52" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#1723#1724#0" expanded="true" />
                 <element signature="e#1751#1752#0" expanded="true" />
                 <element signature="e#5061#5062#0" expanded="true" />
@@ -54,12 +50,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TSDProcessor.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="TSDProcessor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="31" lean-forward="false" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
-              <folding />
+            <state relative-caret-position="271">
+              <caret line="113" column="50" lean-forward="false" selection-start-line="113" selection-start-column="50" selection-end-line="113" selection-end-column="50" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -128,8 +126,8 @@
         <option value="$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/resources/cse219.css" />
-        <option value="$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/src/actions/AppActions.java" />
+        <option value="$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java" />
       </list>
     </option>
@@ -503,7 +501,7 @@
       <updated>1517889365852</updated>
       <workItem from="1520015814823" duration="28425000" />
       <workItem from="1520138028144" duration="11843000" />
-      <workItem from="1520181804335" duration="23695000" />
+      <workItem from="1520181804335" duration="24522000" />
     </task>
     <task id="LOCAL-00001" summary="hw1">
       <created>1517889461759</created>
@@ -516,7 +514,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="63963000" />
+    <option name="totallyTimeSpent" value="64790000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
@@ -920,19 +918,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="31" lean-forward="false" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/hw1/data-vilij/resources/cse219.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="63">
           <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="326">
+          <caret line="165" column="52" lean-forward="false" selection-start-line="165" selection-start-column="52" selection-end-line="165" selection-end-column="52" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1723#1724#0" expanded="true" />
+            <element signature="e#1751#1752#0" expanded="true" />
+            <element signature="e#5061#5062#0" expanded="true" />
+            <element signature="e#5102#5103#0" expanded="true" />
+            <element signature="e#5149#5150#0" expanded="true" />
+            <element signature="e#5186#5187#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -944,17 +950,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java">
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2619">
-          <caret line="21" column="30" lean-forward="false" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
+        <state relative-caret-position="271">
+          <caret line="113" column="50" lean-forward="false" selection-start-line="113" selection-start-column="50" selection-end-line="113" selection-end-column="50" />
           <folding>
-            <element signature="e#1723#1724#0" expanded="true" />
-            <element signature="e#1751#1752#0" expanded="true" />
-            <element signature="e#5061#5062#0" expanded="true" />
-            <element signature="e#5102#5103#0" expanded="true" />
-            <element signature="e#5149#5150#0" expanded="true" />
-            <element signature="e#5186#5187#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
