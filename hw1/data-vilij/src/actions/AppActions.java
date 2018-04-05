@@ -18,6 +18,7 @@ import vilij.settings.PropertyTypes;
 import static vilij.settings.PropertyTypes.SAVE_WORK_TITLE;
 import java.net.URL;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import javafx.scene.image.WritableImage;
 import javafx.scene.SnapshotParameters;
@@ -39,6 +40,7 @@ public final class AppActions implements ActionComponent  {
     Path dataFilePath;
     SimpleBooleanProperty isUnsaved;
     private int numsave = 0;
+    private ArrayList<String> list;
 
     public AppActions(ApplicationTemplate applicationTemplate)
     {
@@ -52,6 +54,7 @@ public final class AppActions implements ActionComponent  {
 
     @Override
     public void handleNewRequest() {
+        AppUI ui = (AppUI)applicationTemplate.getUIComponent();
         try {
             if (!isUnsaved.get() || promptToSave()) {
                 applicationTemplate.getDataComponent().clear();
@@ -61,12 +64,14 @@ public final class AppActions implements ActionComponent  {
                 numsave = 0;
             }
         } catch (IOException e) { errorHandlingHelper(); }
+        ui.newAct();
+        ui.setLoaded(false);
     }
 
     @Override
     public void handleSaveRequest() {
         if(numsave == 0) {
-            File selected = fchooser().showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+            File selected = chooser().showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
             if (selected != null) {
                 dataFilePath = selected.toPath();
                 save();
@@ -90,24 +95,43 @@ public final class AppActions implements ActionComponent  {
             System.err.println(e.getMessage());
         }
 
-        File file = fchooser().showOpenDialog(null);
+        File file = chooser().showOpenDialog(null);
         if (file != null) {
             try {
             Scanner scanner = new Scanner(file);
             String lines = "";
-            int num = 0;
+            //int num = 0;
+            list = new ArrayList<String>();
             while (scanner.hasNextLine()) {
-                lines += scanner.nextLine() + '\n';
-                num++;
+                //lines += scanner.nextLine() + '\n';
+                list.add(scanner.nextLine());
+
+               // num++;
+            }
+            for(int i =0; i < list.size();i++)
+            {
+                lines += list.get(i)+ '\n';
             }
                 if (ui.checkText(lines)) {
-                if(num > 10) {
+                if(list.size() <= 10) {
+                    ui.setTextArea(lines);
+
+                }else {
                     ErrorDialog dialog = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
                     PropertyManager manager = applicationTemplate.manager;
-                    dialog.show("Loaded Data","Loaded data consists of " + num +" lines. Showing the first 10 lines in the text area.");
+                    dialog.show("Loaded Data", "Loaded data consists of " + list.size() + " lines. Showing the first 10 lines in the text area.");
+                    ui.setFileData(lines);
+                    String ten = new String();
+                    for(int i=0;i<10;i++){
+                        ten += list.get(i) + '\n';
+                    }
+                    ui.setTextArea(ten);
+                    ui.setLoaded(true);
+                    ui.loaded();
+                    ui.leftVisiblity(true);
+                    ui.infoMsg(file.getName());
                 }
-                    ui.setTextArea(lines);
-                }
+            }
             scanner.close();
             } catch (FileNotFoundException ex) {
                 System.err.println(ex.getMessage());
@@ -213,7 +237,7 @@ public final class AppActions implements ActionComponent  {
         dialog.show(errTitle, errMsg + errInput);
     }
 
-   private FileChooser fchooser()
+   private FileChooser chooser()
    {
        PropertyManager manager = applicationTemplate.manager;
        FileChooser fileChooser = new FileChooser();

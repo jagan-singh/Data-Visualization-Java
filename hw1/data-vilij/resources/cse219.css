@@ -16,6 +16,13 @@
     -fx-stroke: transparent;
 }
 
+.chart-horizontal-zero-line  {
+    -fx-stroke: transparent;
+}
+
+.chart-vertical-zero-line  {
+    -fx-stroke: transparent;
+}
 .axis Text{
     -fx-fill: red;
 }

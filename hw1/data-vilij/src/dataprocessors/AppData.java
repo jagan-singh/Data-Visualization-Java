@@ -68,4 +68,9 @@ public class AppData implements DataComponent {
     public void displayData() {
         processor.toChartData(((AppUI) applicationTemplate.getUIComponent()).getChart());
     }
+
+    public String forDone(String str)
+    {
+        return processor.instances(str);
+    }
 }

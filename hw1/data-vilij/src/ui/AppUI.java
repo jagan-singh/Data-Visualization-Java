@@ -8,18 +8,23 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.chart.NumberAxis;
 import javafx.stage.Stage;
+import java.io.IOException;
+import javafx.geometry.Insets;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import settings.AppPropertyTypes;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.Label;
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
 import vilij.propertymanager.PropertyManager;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
-import javafx.scene.text.Text;
-import javafx.scene.chart.NumberAxis;
-import java.io.IOException;
-import javafx.scene.text.Font;
-import javafx.geometry.Insets;
 import static settings.AppPropertyTypes.SCREENSHOT_ICON;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
@@ -44,15 +49,29 @@ public final class AppUI extends UITemplate {
     private TextArea textArea;       // text area for new data input
     private boolean hasNewText;// whether or not the text area has any new data since last display
     private String scrnpath;
-    CheckBox checkBox;
+    private String displayPath;
+    private CheckBox checkBox;
+    private boolean loaded = false;
+    private String fileData = new String();
+    private ToggleButton edit;
+    private ToggleButton done;
+    private VBox leftPanel;
+    private Text leftPanelTitle;
+    private VBox algv;
+    private HBox ed;
+    private Label info;
+    private Button clustering;
+    private Button classification;
+    private VBox algorithms;
 
-    public LineChart<Number, Number> getChart() {
-        return chart;
-    }
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
         super(primaryStage, applicationTemplate);
         this.applicationTemplate = applicationTemplate;
+    }
+
+    public LineChart<Number, Number> getChart() {
+        return chart;
     }
 
     @Override
@@ -137,15 +156,15 @@ public final class AppUI extends UITemplate {
         chart = new LineChart<>(xAxis, yAxis);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
 
-        VBox leftPanel = new VBox(8);
+        leftPanel = new VBox(8);
         leftPanel.setAlignment(Pos.TOP_CENTER);
         leftPanel.setPadding(new Insets(10));
 
         VBox.setVgrow(leftPanel, Priority.ALWAYS);
-        leftPanel.setMaxSize(windowWidth * 0.29, windowHeight * 0.345);
-        leftPanel.setMinSize(windowWidth * 0.29, windowHeight * 0.3);
+        //leftPanel.setMaxSize(windowWidth * 0.29, windowHeight * 0.50);
+        //leftPanel.setMinSize(windowWidth * 0.29, windowHeight * 0.3);
 
-        Text leftPanelTitle = new Text(manager.getPropertyValue(AppPropertyTypes.LEFT_PANE_TITLE.name()));
+        leftPanelTitle = new Text(manager.getPropertyValue(AppPropertyTypes.LEFT_PANE_TITLE.name()));
         String fontname = manager.getPropertyValue(AppPropertyTypes.LEFT_PANE_TITLEFONT.name());
         Double fontsize = Double.parseDouble(manager.getPropertyValue(AppPropertyTypes.LEFT_PANE_TITLESIZE.name()));
         leftPanelTitle.setFont(Font.font(fontname, fontsize));
@@ -153,15 +172,32 @@ public final class AppUI extends UITemplate {
         textArea = new TextArea();
 
         HBox processButtonsBox = new HBox();
-        displayButton = new Button(manager.getPropertyValue(AppPropertyTypes.DISPLAY_BUTTON_TEXT.name()));
-        checkBox = new CheckBox();
-        checkBox.setText("Read Only");
+       // Image cameraIcon = new Image(getClass().getClassLoader().getResourceAsStream("@display.png"));
+        //ImageView cameraIconView = new ImageView(cameraIcon);
+       displayButton = new Button(manager.getPropertyValue(AppPropertyTypes.DISPLAY_BUTTON_TEXT.name()));
+
+         info = new Label();
+         //info.setMaxSize(windowWidth * 0.29, windowHeight * 0.50);
+        info.setWrapText(true);
+
+       //toggle buttons
+        edit = new ToggleButton("Edit");
+        done = new ToggleButton("Done");
+        ToggleGroup group = new ToggleGroup();
+        edit.setToggleGroup(group);
+        done.setToggleGroup(group);
+        edit.setDisable(true);
+
+         ed = new HBox();
+         ed.getChildren().addAll(edit,done);
+         ed.setSpacing(10);
+
         HBox.setHgrow(processButtonsBox, Priority.ALWAYS);
         processButtonsBox.setSpacing(20);
-        checkBox.setSelected(false);
-        processButtonsBox.getChildren().addAll(checkBox,displayButton);
+        //checkBox.setSelected(false);
+        //processButtonsBox.getChildren().addAll(checkBox);
 
-        leftPanel.getChildren().addAll(leftPanelTitle, textArea, processButtonsBox);
+        leftPanel.getChildren().addAll(leftPanelTitle, textArea,info, processButtonsBox,ed,displayButton);
 
         StackPane rightPanel = new StackPane(chart);
         rightPanel.setMaxSize(windowWidth * 0.69, windowHeight * 0.69);
@@ -174,12 +210,16 @@ public final class AppUI extends UITemplate {
         appPane.getChildren().add(workspace);
         VBox.setVgrow(appPane, Priority.ALWAYS);
         appPane.getStylesheets().add("cse219.css");
+
+        leftVisiblity(false);
+        newButton.setDisable(false);
     }
 
     private void setWorkspaceActions() {
         setTextAreaActions();
         setDisplayButtonActions();
-        setCheckBoxActions();
+        setAlgTypeAction();
+        toggleActions();
     }
 
     private void setTextAreaActions() {
@@ -208,6 +248,14 @@ public final class AppUI extends UITemplate {
 
     private void setDisplayButtonActions() {
         displayButton.setOnAction(event -> {
+            if(loaded){
+                chart.getData().clear();
+                AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
+                dataComponent.clear();
+                dataComponent.loadData(fileData);
+                dataComponent.displayData();
+            }
+            else
             if(textArea.getText().equals("")) {
                 chart.getData().clear();
                 scrnshotButton.setDisable(true);
@@ -225,7 +273,6 @@ public final class AppUI extends UITemplate {
                     e.printStackTrace();
                 }
             }
-
             if(chart.getData().size() == 0)
                 scrnshotButton.setDisable(true);
             else
@@ -233,7 +280,7 @@ public final class AppUI extends UITemplate {
         });
     }
 
-    private void setCheckBoxActions(){
+   /* private void setCheckBoxActions(){
         checkBox.selectedProperty().addListener(e -> {
             if(checkBox.selectedProperty().get()) {
                 textArea.setEditable(false);
@@ -244,7 +291,36 @@ public final class AppUI extends UITemplate {
                 textArea.setStyle( "-fx-text-fill: black");
             }
         });
+    }*/
+
+    private void toggleActions()
+    {
+        algv = new VBox();
+        clustering = new Button("Clustering");
+        classification = new Button("Classification");
+        algv.getChildren().addAll(clustering,classification);
+
+        edit.setOnAction( e -> {
+            edit.setDisable(true);
+            done.setDisable(false);
+            textArea.setEditable(true);
+            textArea.setStyle( "-fx-text-fill: black");
+            leftPanel.getChildren().remove(algv);
+        });
+
+        done.setOnAction(e -> {
+            if (checkText(textArea.getText()) && checkDuplicates())
+            {
+              done.setDisable(true);
+              edit.setDisable(false);
+              textArea.setEditable(false);
+              textArea.setStyle("-fx-text-fill: gray");
+              leftPanel.getChildren().add(algv);
+              infoMsg("TextArea");
+            }
+        });
     }
+
 
     public boolean checkText(String str)
     {
@@ -290,4 +366,73 @@ public final class AppUI extends UITemplate {
        }
        return true;
    }
+
+   public void setLoaded(boolean bool)
+   {
+       loaded = bool;
+   }
+
+   public void setFileData(String str)
+   {
+       fileData = str;
+   }
+
+   public void loaded()
+   {
+       textArea.setEditable(false);
+       textArea.setStyle( "-fx-text-fill: gray");
+      // leftPanel.getChildren().removeAll(ed);
+       ed.setVisible(false);
+   }
+
+   public void newAct()
+   {
+       if(loaded)
+          ed.setVisible(true);
+       textArea.setEditable(true);
+       textArea.setStyle( "-fx-text-fill: black");
+       edit.setDisable(true);
+       done.setDisable(false);
+       leftVisiblity(true);
+       info.setText("");
+   }
+
+   public void leftVisiblity(boolean bool)
+   {
+       leftPanelTitle.setVisible(bool);
+       textArea.setVisible(bool);
+       displayButton.setVisible(bool);
+       edit.setVisible(bool);
+       done.setVisible(bool);
+   }
+
+   public void infoMsg(String str)
+   {
+       if(loaded)
+           ((AppData)applicationTemplate.getDataComponent()).loadData(fileData);
+       else
+           ((AppData)applicationTemplate.getDataComponent()).loadData(textArea.getText());
+
+       info.setText(((AppData)applicationTemplate.getDataComponent()).forDone(str));
+   }
+
+    private void setAlgTypeAction()
+    {
+        /*Button config = new Button();
+        Button rclass = new Button("Random Classification");
+        Button rclus = new Button("Random Clustering");
+        clustering.setOnAction( e -> {
+          algorithms.getChildren().add(rclus);
+            leftPanel.getChildren().remove(algv);
+            leftPanel.getChildren().add(rclass);
+        });
+
+        classification.setOnAction( e -> {
+            leftPanel.getChildren().remove(algv);
+            leftPanel.getChildren().add(rclus);
+        });*/
+    }
+
+
+
 }

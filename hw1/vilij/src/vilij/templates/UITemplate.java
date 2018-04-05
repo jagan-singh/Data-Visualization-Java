@@ -26,10 +26,6 @@ import static vilij.settings.PropertyTypes.*;
 public class UITemplate implements UIComponent{
 
     private static final String SEPARATOR = "/";
-    private static final String UI_NOT_INITIALIZABLE_FOR_TEMPLATES = "The graphical user interface cannot be " +
-                                                                     "initialized at template-level. A child " +
-                                                                     "class must be implemented.";
-
     protected Pane    workspace;        // the top-level GUI element in the main workspace
     protected ToolBar toolBar;          // the top toolbar
     protected String  newiconPath;      // path to the 'new' icon

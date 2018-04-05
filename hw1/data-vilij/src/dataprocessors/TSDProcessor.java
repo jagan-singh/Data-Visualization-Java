@@ -33,7 +33,6 @@ public final class TSDProcessor {
 
     private Map<String, String>  dataLabels;
     private Map<String, Point2D> dataPoints;
-    private String ptname;
 
     public TSDProcessor() {
         dataLabels = new HashMap<>();
@@ -52,7 +51,7 @@ public final class TSDProcessor {
               .map(line -> Arrays.asList(line.split("\t")))
               .forEach(list -> {
                   try {
-                      String   name  = checkedname(list.get(0));
+                      String   name  = checkedName(list.get(0));
                       String   label = list.get(1);
                       String[] pair  = list.get(2).split(",");
                       Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
@@ -107,11 +106,16 @@ public final class TSDProcessor {
                 avgser.getData().add(new XYChart.Data<>(point.getX(), yavg));
             });
         }
+      
+        if(dataPoints.size() == 1)
+        {
+            avgser.getData().add(new XYChart.Data<>(0,yavg));
+        }
         chart.getData().add(avgser);
 
         for(int i=0;i<avgser.getData().size();i++)
            avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
-        avgser.getNode().setStyle("-fx-stroke: red");
+        avgser.getNode().setStyle("-fx-stroke: green");
     }
 
     void clear() {
@@ -119,10 +123,25 @@ public final class TSDProcessor {
         dataLabels.clear();
     }
 
-    private String checkedname(String name) throws InvalidDataNameException {
+    private String checkedName(String name) throws InvalidDataNameException {
         if (!name.startsWith("@"))
             throw new InvalidDataNameException(name);
         return name;
     }
+
+    public String instances(String path){
+        String str = String.valueOf(dataLabels.entrySet().size());
+        String labels = "";
+        Map<String,String> ulabels = new HashMap();
+        for(Map.Entry<String, String> ent : dataLabels.entrySet())
+          ulabels.put(ent.getValue(),ent.getKey());
+        for(Map.Entry<String,String> ent :ulabels.entrySet())
+          labels += "-" + ent.getKey() + "\n";
+       str +=  " instances with " + ulabels.entrySet().size() + " labels loaded from "+ path+ " .The labels are:\n" + labels;
+      return str;
+    }
+
+
+
 }
 
