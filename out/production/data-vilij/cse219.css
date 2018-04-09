@@ -12,9 +12,6 @@
     -fx-font-size: 15px;
 }
 
-.chart-series-line {
-    -fx-stroke: transparent;
-}
 
 .chart-horizontal-zero-line  {
     -fx-stroke: transparent;

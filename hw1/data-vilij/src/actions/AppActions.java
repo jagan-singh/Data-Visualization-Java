@@ -129,7 +129,7 @@ public final class AppActions implements ActionComponent  {
                     ui.setLoaded(true);
                     ui.loaded();
                     ui.leftVisiblity(true);
-                    ui.infoMsg(file.getName());
+                    ui.infoMsg(file.getPath());
                 }
             }
             scanner.close();

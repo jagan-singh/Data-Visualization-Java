@@ -85,6 +85,7 @@ public final class TSDProcessor {
                 series.getData().add(new XYChart.Data<>(point.getX(), point.getY()));
             });
             chart.getData().add(series);
+            series.getNode().setVisible(false);
             for (int i = 0; i < series.getData().size(); i++) {
                 Tooltip.install(series.getData().get(i).getNode(), new Tooltip(keyarray[i].substring(1)));
                 series.getData().get(i).getNode().setOnMouseEntered((MouseEvent event) -> {
@@ -115,7 +116,8 @@ public final class TSDProcessor {
 
         for(int i=0;i<avgser.getData().size();i++)
            avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
-        avgser.getNode().setStyle("-fx-stroke: green");
+        avgser.getNode().setVisible(true);
+
     }
 
     void clear() {

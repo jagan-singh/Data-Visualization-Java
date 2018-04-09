@@ -62,7 +62,6 @@ public final class AppUI extends UITemplate {
     private Label info;
     private Button clustering;
     private Button classification;
-    private VBox algorithms;
 
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
@@ -192,6 +191,12 @@ public final class AppUI extends UITemplate {
          ed.getChildren().addAll(edit,done);
          ed.setSpacing(10);
 
+        algv = new VBox();
+        clustering = new Button("Clustering");
+        classification = new Button("Classification");
+        //Text att = new Text("Algorithm Type");
+        algv.getChildren().addAll(clustering,classification);
+
         HBox.setHgrow(processButtonsBox, Priority.ALWAYS);
         processButtonsBox.setSpacing(20);
         //checkBox.setSelected(false);
@@ -280,26 +285,8 @@ public final class AppUI extends UITemplate {
         });
     }
 
-   /* private void setCheckBoxActions(){
-        checkBox.selectedProperty().addListener(e -> {
-            if(checkBox.selectedProperty().get()) {
-                textArea.setEditable(false);
-                textArea.setStyle( "-fx-text-fill: gray");
-            }
-            else {
-                textArea.setEditable(true);
-                textArea.setStyle( "-fx-text-fill: black");
-            }
-        });
-    }*/
-
     private void toggleActions()
     {
-        algv = new VBox();
-        clustering = new Button("Clustering");
-        classification = new Button("Classification");
-        algv.getChildren().addAll(clustering,classification);
-
         edit.setOnAction( e -> {
             edit.setDisable(true);
             done.setDisable(false);
@@ -315,8 +302,10 @@ public final class AppUI extends UITemplate {
               edit.setDisable(false);
               textArea.setEditable(false);
               textArea.setStyle("-fx-text-fill: gray");
-              leftPanel.getChildren().add(algv);
               infoMsg("TextArea");
+              algv.getChildren().clear();
+              algv.getChildren().addAll(classification,clustering);
+              leftPanel.getChildren().add(algv);
             }
         });
     }
@@ -381,8 +370,11 @@ public final class AppUI extends UITemplate {
    {
        textArea.setEditable(false);
        textArea.setStyle( "-fx-text-fill: gray");
-      // leftPanel.getChildren().removeAll(ed);
        ed.setVisible(false);
+       saveButton.setDisable(true);
+       algv.getChildren().clear();
+       algv.getChildren().addAll(classification,clustering);
+       leftPanel.getChildren().add(algv);
    }
 
    public void newAct()
@@ -395,6 +387,7 @@ public final class AppUI extends UITemplate {
        done.setDisable(false);
        leftVisiblity(true);
        info.setText("");
+       leftPanel.getChildren().remove(algv);
    }
 
    public void leftVisiblity(boolean bool)
@@ -418,20 +411,21 @@ public final class AppUI extends UITemplate {
 
     private void setAlgTypeAction()
     {
-        /*Button config = new Button();
+        Button config = new Button();
         Button rclass = new Button("Random Classification");
         Button rclus = new Button("Random Clustering");
         clustering.setOnAction( e -> {
-          algorithms.getChildren().add(rclus);
-            leftPanel.getChildren().remove(algv);
-            leftPanel.getChildren().add(rclass);
+            algv.getChildren().removeAll(classification,clustering);
+            algv.getChildren().add(rclus);
         });
 
         classification.setOnAction( e -> {
-            leftPanel.getChildren().remove(algv);
-            leftPanel.getChildren().add(rclus);
-        });*/
+            algv.getChildren().removeAll(clustering,classification);
+            algv.getChildren().add(rclass);
+        });
     }
+
+
 
 
 
