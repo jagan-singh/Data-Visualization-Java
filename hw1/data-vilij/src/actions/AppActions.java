@@ -100,13 +100,9 @@ public final class AppActions implements ActionComponent  {
             try {
             Scanner scanner = new Scanner(file);
             String lines = "";
-            //int num = 0;
             list = new ArrayList<String>();
             while (scanner.hasNextLine()) {
-                //lines += scanner.nextLine() + '\n';
                 list.add(scanner.nextLine());
-
-               // num++;
             }
             for(int i =0; i < list.size();i++)
             {
@@ -115,22 +111,21 @@ public final class AppActions implements ActionComponent  {
                 if (ui.checkText(lines)) {
                 if(list.size() <= 10) {
                     ui.setTextArea(lines);
-
                 }else {
                     ErrorDialog dialog = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
                     PropertyManager manager = applicationTemplate.manager;
                     dialog.show("Loaded Data", "Loaded data consists of " + list.size() + " lines. Showing the first 10 lines in the text area.");
                     ui.setFileData(lines);
                     String ten = new String();
-                    for(int i=0;i<10;i++){
+                    for(int i=0;i<10;i++) {
                         ten += list.get(i) + '\n';
                     }
                     ui.setTextArea(ten);
+                }
                     ui.setLoaded(true);
                     ui.loaded();
                     ui.leftVisiblity(true);
                     ui.infoMsg(file.getPath());
-                }
             }
             scanner.close();
             } catch (FileNotFoundException ex) {
@@ -248,7 +243,7 @@ public final class AppActions implements ActionComponent  {
        String extension   = manager.getPropertyValue(AppPropertyTypes.DATA_FILE_EXT.name());
        ExtensionFilter extFilter = new ExtensionFilter(String.format("%s (.*%s)", description, extension),
                String.format("*.%s", extension));
-       fileChooser.getExtensionFilters().add(extFilter);
+       fileChooser.getExtensionFilters().addAll(extFilter);
        return fileChooser;
    }
 }

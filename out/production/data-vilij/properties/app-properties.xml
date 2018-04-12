@@ -13,9 +13,13 @@ functionality within the main workspace. -->
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="SCREENSHOT_TOOLTIP" value="Screenshot"/> <!-- will print current view of image to a file -->
 
+        <property name="CONFIG_ICON" value="config.png"/>
+
+        <property name="CONFIG_TOOLTIP" value="Configuration"/>
+
         <!-- WARNING MESSAGES -->
         <property name="EXIT_WHILE_RUNNING_WARNING"
-                  value="An algorithm is running. If you exit now, all unsaved changes will be lost. Are you sure?"/>
+                  value="An algorithms is running. If you exit now, all unsaved changes will be lost. Are you sure?"/>
 
         <!-- ERROR MESSAGES -->
         <property name="RESOURCE_SUBDIR_NOT_FOUND" value="Directory not found under resources."/>
@@ -42,7 +46,13 @@ functionality within the main workspace. -->
         <property name="CHART_TITLE" value="Data Visualization"/>
         <property name="DISPLAY_BUTTON_TEXT" value="Display"/>
 
-
+        <property name="EDIT" value="Edit"/>
+        <property name="DONE" value="Done"/>
+        <property name="ALGO_VBOX_TITLE" value="Algorithm Type"/>
+        <property name="CLUSTERING" value="Clustering"/>
+        <property name="CLASSIFICATION" value="Classification"/>
+        <property name="RANDOM_CLUSTERING" value="Random Clustering"/>
+        <property name="RANDOM_CLASSIFICATION" value="Random Classification"/>
     </property_list>
     <property_options_list/>
 </properties>

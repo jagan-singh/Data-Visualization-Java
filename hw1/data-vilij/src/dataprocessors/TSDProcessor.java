@@ -1,5 +1,6 @@
 package dataprocessors;
 
+import data.DataSet;
 import javafx.geometry.Point2D;
 import javafx.scene.chart.XYChart;
 import java.util.*;
@@ -31,44 +32,48 @@ public final class TSDProcessor {
         }
     }
 
-    private Map<String, String>  dataLabels;
+    private Map<String, String> dataLabels;
     private Map<String, Point2D> dataPoints;
+    private int numOfLabels;
 
     public TSDProcessor() {
         dataLabels = new HashMap<>();
         dataPoints = new HashMap<>();
+        numOfLabels = 0;
     }
 
     /**
      * Processes the data and populated two {@link Map} objects with the data.
+     *
      * @param tsdString the input data provided as a single {@link String}
      * @throws Exception if the input string does not follow the <code>.tsd</code> data format
      */
     public void processString(String tsdString) throws Exception {
-        AtomicBoolean hadAnError   = new AtomicBoolean(false);
+        AtomicBoolean hadAnError = new AtomicBoolean(false);
         StringBuilder errorMessage = new StringBuilder();
         Stream.of(tsdString.split("\n"))
-              .map(line -> Arrays.asList(line.split("\t")))
-              .forEach(list -> {
-                  try {
-                      String   name  = checkedName(list.get(0));
-                      String   label = list.get(1);
-                      String[] pair  = list.get(2).split(",");
-                      Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
-                      dataLabels.put(name, label);
-                      dataPoints.put(name, point);
-                  } catch (Exception e) {
-                      errorMessage.setLength(0);
-                      errorMessage.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
-                      hadAnError.set(true);
-                  }
-              });
+                .map(line -> Arrays.asList(line.split("\t")))
+                .forEach(list -> {
+                    try {
+                        String name = checkedName(list.get(0));
+                        String label = list.get(1);
+                        String[] pair = list.get(2).split(",");
+                        Point2D point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
+                        dataLabels.put(name, label);
+                        dataPoints.put(name, point);
+                    } catch (Exception e) {
+                        errorMessage.setLength(0);
+                        errorMessage.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
+                        hadAnError.set(true);
+                    }
+                });
         if (errorMessage.length() > 0)
             throw new Exception(errorMessage.toString());
     }
 
     /**
      * Exports the data to the specified 2-D chart
+     *
      * @param chart the specified chart
      */
     void toChartData(XYChart<Number, Number> chart) {
@@ -107,17 +112,15 @@ public final class TSDProcessor {
                 avgser.getData().add(new XYChart.Data<>(point.getX(), yavg));
             });
         }
-      
-        if(dataPoints.size() == 1)
-        {
-            avgser.getData().add(new XYChart.Data<>(0,yavg));
+
+        if (dataPoints.size() == 1) {
+            avgser.getData().add(new XYChart.Data<>(0, yavg));
         }
         chart.getData().add(avgser);
 
-        for(int i=0;i<avgser.getData().size();i++)
-           avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
+        for (int i = 0; i < avgser.getData().size(); i++)
+            avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
         avgser.getNode().setVisible(true);
-
     }
 
     void clear() {
@@ -131,19 +134,20 @@ public final class TSDProcessor {
         return name;
     }
 
-    public String instances(String path){
+    public String instances(String path) {
         String str = String.valueOf(dataLabels.entrySet().size());
         String labels = "";
-        Map<String,String> ulabels = new HashMap();
-        for(Map.Entry<String, String> ent : dataLabels.entrySet())
-          ulabels.put(ent.getValue(),ent.getKey());
-        for(Map.Entry<String,String> ent :ulabels.entrySet())
-          labels += "-" + ent.getKey() + "\n";
-       str +=  " instances with " + ulabels.entrySet().size() + " labels loaded from "+ path+ " .The labels are:\n" + labels;
-      return str;
+        Map<String, String> ulabels = new HashMap();
+        for (Map.Entry<String, String> ent : dataLabels.entrySet())
+            ulabels.put(ent.getValue(), ent.getKey());
+        for (Map.Entry<String, String> ent : ulabels.entrySet())
+            labels += "-" + ent.getKey() + "\n";
+        str += " instances with " + ulabels.entrySet().size() + " labels loaded from " + path + " .The labels are:\n" + labels;
+        numOfLabels = ulabels.size();
+        return str;
     }
 
-
-
+    public int getNumOfLabels() {
+        return numOfLabels;
+    }
 }
-

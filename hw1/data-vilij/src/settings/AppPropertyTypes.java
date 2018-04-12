@@ -18,6 +18,9 @@ public enum AppPropertyTypes {
     /* tooltips for user interface buttons */
     SCREENSHOT_TOOLTIP,
 
+    CONFIG_ICON,
+    CONFIG_TOOLTIP,
+
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,
 
@@ -41,5 +44,12 @@ public enum AppPropertyTypes {
     DATA_FILE_EXT,
     DATA_FILE_EXT_DESC,
     TEXT_AREA,
-    SPECIFIED_FILE
+    SPECIFIED_FILE,
+    EDIT,
+    DONE,
+    ALGO_VBOX_TITLE,
+    CLUSTERING,
+    CLASSIFICATION,
+    RANDOM_CLASSIFICATION,
+    RANDOM_CLUSTERING
 }

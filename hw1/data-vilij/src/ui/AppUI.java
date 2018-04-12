@@ -1,12 +1,12 @@
 package ui;
 
 import actions.AppActions;
+import classification.RandomClassifier;
+import data.DataSet;
 import dataprocessors.AppData;
 import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -14,18 +14,18 @@ import javafx.scene.chart.NumberAxis;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.geometry.Insets;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import settings.AppPropertyTypes;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Label;
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
 import vilij.propertymanager.PropertyManager;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
-import static settings.AppPropertyTypes.SCREENSHOT_ICON;
+import javafx.stage.Popup;
+import javafx.stage.Window;
+import static settings.AppPropertyTypes.*;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 
@@ -43,6 +43,7 @@ public final class AppUI extends UITemplate {
     ApplicationTemplate applicationTemplate;
 
     @SuppressWarnings("FieldCanBeLocal")
+    private static final String SEPARATOR = "/";
     private Button scrnshotButton; // toolbar button to take a screenshot of the data
     private LineChart<Number, Number> chart;          // the chart where data will be displayed
     private Button displayButton;  // workspace button to display data on the chart
@@ -62,6 +63,15 @@ public final class AppUI extends UITemplate {
     private Label info;
     private Button clustering;
     private Button classification;
+    private Button classConfig;
+    private Button clusConfig;
+    private RadioButton rclass;
+    private RadioButton rclus;
+    private Label algoTitle;
+    private HBox rclassBox;
+    private HBox rclusBox;
+    DataSet set;
+
 
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
@@ -82,7 +92,7 @@ public final class AppUI extends UITemplate {
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
         super.setToolBar(applicationTemplate);
         PropertyManager manager = applicationTemplate.manager;
-        String iconsPath = "/" + String.join("/", manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+        String iconsPath = SEPARATOR + String.join("/", manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                 manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
         scrnpath = String.join("/", iconsPath, manager.getPropertyValue(SCREENSHOT_ICON.name()));
         scrnshotButton = setToolbarButton(scrnpath,
@@ -114,7 +124,14 @@ public final class AppUI extends UITemplate {
                         saveButton.setDisable(true);
                 }
             });
-            loadButton.setOnAction(e -> applicationTemplate.getActionComponent().handleLoadRequest());
+            loadButton.setOnAction(e ->
+            {
+                applicationTemplate.getActionComponent().handleLoadRequest();
+                if(((AppData)applicationTemplate.getDataComponent()).numLabels() != 2)
+                    classification.setDisable(true);
+                else
+                    classification.setDisable(false);
+            });
         exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
         printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
         scrnshotButton.setOnAction(e -> {
@@ -180,29 +197,56 @@ public final class AppUI extends UITemplate {
         info.setWrapText(true);
 
        //toggle buttons
-        edit = new ToggleButton("Edit");
-        done = new ToggleButton("Done");
+        edit = new ToggleButton(applicationTemplate.manager.getPropertyValue(EDIT.name()));
+        done = new ToggleButton(applicationTemplate.manager.getPropertyValue(DONE.name()));
         ToggleGroup group = new ToggleGroup();
         edit.setToggleGroup(group);
         done.setToggleGroup(group);
         edit.setDisable(true);
 
-         ed = new HBox();
-         ed.getChildren().addAll(edit,done);
-         ed.setSpacing(10);
+        //HBOX for toggle buttons
+        ed = new HBox();
+        ed.getChildren().addAll(edit,done);
+        ed.setSpacing(10);
 
+        //VBOX for algorithm types
         algv = new VBox();
-        clustering = new Button("Clustering");
-        classification = new Button("Classification");
-        //Text att = new Text("Algorithm Type");
-        algv.getChildren().addAll(clustering,classification);
+        algv.setPadding(new Insets(10));
+        algv.setSpacing(10);
+        clustering = new Button(applicationTemplate.manager.getPropertyValue(CLUSTERING.name()));
+        classification = new Button(applicationTemplate.manager.getPropertyValue(CLASSIFICATION.name()));
+        algoTitle = new Label(applicationTemplate.manager.getPropertyValue(ALGO_VBOX_TITLE.name()));
+        algv.getChildren().addAll(algoTitle,clustering,classification);
+
+
+        rclassBox = new HBox();
+        rclusBox = new HBox();
+        String iconsPath = SEPARATOR + String.join("/", manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+        scrnpath = String.join("/", iconsPath, manager.getPropertyValue(CONFIG_ICON.name()));
+        classConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(scrnpath))));
+        clusConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(scrnpath))));
+
+        rclass = new RadioButton(applicationTemplate.manager.getPropertyValue(RANDOM_CLASSIFICATION.name()));
+        rclus = new RadioButton(applicationTemplate.manager.getPropertyValue(RANDOM_CLUSTERING.name()));
+
+        classConfig.setDisable(true);
+        clusConfig.setDisable(true);
+
+        rclusBox.getChildren().addAll(rclus,clusConfig);
+        rclassBox.getChildren().addAll(rclass,classConfig);
+
+        rclusBox.setSpacing(10);
+        rclassBox.setSpacing(10);
 
         HBox.setHgrow(processButtonsBox, Priority.ALWAYS);
         processButtonsBox.setSpacing(20);
         //checkBox.setSelected(false);
         //processButtonsBox.getChildren().addAll(checkBox);
 
-        leftPanel.getChildren().addAll(leftPanelTitle, textArea,info, processButtonsBox,ed,displayButton);
+        leftPanel.getChildren().addAll(leftPanelTitle, textArea,info, processButtonsBox,ed,algv,displayButton);
+        algv.getChildren().clear();
+
 
         StackPane rightPanel = new StackPane(chart);
         rightPanel.setMaxSize(windowWidth * 0.69, windowHeight * 0.69);
@@ -225,6 +269,7 @@ public final class AppUI extends UITemplate {
         setDisplayButtonActions();
         setAlgTypeAction();
         toggleActions();
+        algActions();
     }
 
     private void setTextAreaActions() {
@@ -285,32 +330,6 @@ public final class AppUI extends UITemplate {
         });
     }
 
-    private void toggleActions()
-    {
-        edit.setOnAction( e -> {
-            edit.setDisable(true);
-            done.setDisable(false);
-            textArea.setEditable(true);
-            textArea.setStyle( "-fx-text-fill: black");
-            leftPanel.getChildren().remove(algv);
-        });
-
-        done.setOnAction(e -> {
-            if (checkText(textArea.getText()) && checkDuplicates())
-            {
-              done.setDisable(true);
-              edit.setDisable(false);
-              textArea.setEditable(false);
-              textArea.setStyle("-fx-text-fill: gray");
-              infoMsg("TextArea");
-              algv.getChildren().clear();
-              algv.getChildren().addAll(classification,clustering);
-              leftPanel.getChildren().add(algv);
-            }
-        });
-    }
-
-
     public boolean checkText(String str)
     {
         Boolean bool = true;
@@ -366,15 +385,43 @@ public final class AppUI extends UITemplate {
        fileData = str;
    }
 
-   public void loaded()
+    private void toggleActions()
+    {
+        edit.setOnAction( e -> {
+            edit.setDisable(true);
+            done.setDisable(false);
+            textArea.setEditable(true);
+            textArea.setStyle( "-fx-text-fill: black");
+            algv.getChildren().clear();
+        });
+
+        done.setOnAction(e -> {
+            if (checkText(textArea.getText()) && checkDuplicates())
+            {
+                done.setDisable(true);
+                edit.setDisable(false);
+                textArea.setEditable(false);
+                textArea.setStyle("-fx-text-fill: gray");
+                infoMsg("TextArea");
+                algv.getChildren().clear();
+                algv.getChildren().addAll(algoTitle,classification,clustering);
+                if(((AppData)applicationTemplate.getDataComponent()).numLabels() != 2)
+                    classification.setDisable(true);
+                else
+                    classification.setDisable(false);
+            }
+        });
+    }
+
+
+    public void loaded()
    {
        textArea.setEditable(false);
        textArea.setStyle( "-fx-text-fill: gray");
        ed.setVisible(false);
        saveButton.setDisable(true);
        algv.getChildren().clear();
-       algv.getChildren().addAll(classification,clustering);
-       leftPanel.getChildren().add(algv);
+       algv.getChildren().addAll(algoTitle,classification,clustering);
    }
 
    public void newAct()
@@ -387,7 +434,7 @@ public final class AppUI extends UITemplate {
        done.setDisable(false);
        leftVisiblity(true);
        info.setText("");
-       leftPanel.getChildren().remove(algv);
+       algv.getChildren().clear();
    }
 
    public void leftVisiblity(boolean bool)
@@ -401,32 +448,83 @@ public final class AppUI extends UITemplate {
 
    public void infoMsg(String str)
    {
-       if(loaded)
-           ((AppData)applicationTemplate.getDataComponent()).loadData(fileData);
-       else
+
+       if(loaded) {
+           applicationTemplate.getDataComponent().clear();
+           ((AppData) applicationTemplate.getDataComponent()).loadData(fileData);
+       }
+       else{
+           applicationTemplate.getDataComponent().clear();
            ((AppData)applicationTemplate.getDataComponent()).loadData(textArea.getText());
+       }
 
        info.setText(((AppData)applicationTemplate.getDataComponent()).forDone(str));
    }
 
     private void setAlgTypeAction()
     {
-        Button config = new Button();
-        Button rclass = new Button("Random Classification");
-        Button rclus = new Button("Random Clustering");
         clustering.setOnAction( e -> {
-            algv.getChildren().removeAll(classification,clustering);
-            algv.getChildren().add(rclus);
+            algv.getChildren().clear();
+            algv.getChildren().addAll(new Label(applicationTemplate.manager.getPropertyValue(CLUSTERING.name())),rclusBox);
         });
 
         classification.setOnAction( e -> {
-            algv.getChildren().removeAll(clustering,classification);
-            algv.getChildren().add(rclass);
+
+            algv.getChildren().clear();
+            algv.getChildren().addAll(new Label(applicationTemplate.manager.getPropertyValue(CLASSIFICATION.name())),rclassBox);
+        });
+    }
+
+    private void algActions()
+    {
+
+        rclass.setOnAction( e -> {
+            rclass.setSelected(true);
+            classConfig.setDisable(false);
+
+        });
+
+        rclus.setOnAction( e -> {
+            rclus.setSelected(true);
+            clusConfig.setDisable(false);
         });
     }
 
 
+    private DataSet something(String str)
+    {
+        set = new DataSet();
+        if(loaded)
+          str = fileData;
+        else
+          str = textArea.getText();
 
+        String lines[] = str.split("\\r?\\n");
+        for(int i=0;i<lines.length;i++)
+        {
+                //set.addInstance(lines[i]);
 
+        }
+        return set;
+    }
+
+    private void configAction()
+    {
+        classConfig.setOnAction( e -> {
+            configDialog();
+        });
+
+    }
+
+    private void configDialog()
+    {
+        Stage stage = new Stage();
+        final Popup popup = new Popup();
+        popup.setX(300);
+        popup.setY(200);
+        popup.getContent().addAll(new TextArea("hello"));
+        popup.show(stage);
+        stage.show();
+    }
 
 }

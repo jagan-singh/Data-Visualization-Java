@@ -36,6 +36,7 @@ public class AppData implements DataComponent {
     @Override
     public void loadData(Path dataFilePath) {
         // TODO: NOT A PART OF HW 1
+
     }
 
     public void loadData(String dataString){
@@ -73,4 +74,10 @@ public class AppData implements DataComponent {
     {
         return processor.instances(str);
     }
+
+    public int numLabels()
+    {
+        return processor.getNumOfLabels();
+    }
 }
+
