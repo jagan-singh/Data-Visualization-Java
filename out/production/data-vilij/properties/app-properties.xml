@@ -14,6 +14,7 @@ functionality within the main workspace. -->
         <property name="SCREENSHOT_TOOLTIP" value="Screenshot"/> <!-- will print current view of image to a file -->
 
         <property name="CONFIG_ICON" value="config.png"/>
+        <property name="PLAY_ICON" value="play.png"/>
 
         <property name="CONFIG_TOOLTIP" value="Configuration"/>
 

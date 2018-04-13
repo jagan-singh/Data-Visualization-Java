@@ -20,6 +20,7 @@ public enum AppPropertyTypes {
 
     CONFIG_ICON,
     CONFIG_TOOLTIP,
+    PLAY_ICON,
 
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,

@@ -5,6 +5,7 @@ import classification.RandomClassifier;
 import data.DataSet;
 import dataprocessors.AppData;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -70,6 +71,11 @@ public final class AppUI extends UITemplate {
     private Label algoTitle;
     private HBox rclassBox;
     private HBox rclusBox;
+    private boolean cluster;
+    private int iterations = 0;
+    private int interval = 0;
+    private int labels = 0;
+    private boolean continuous = false;
     DataSet set;
 
 
@@ -94,7 +100,7 @@ public final class AppUI extends UITemplate {
         PropertyManager manager = applicationTemplate.manager;
         String iconsPath = SEPARATOR + String.join("/", manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                 manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
-        scrnpath = String.join("/", iconsPath, manager.getPropertyValue(SCREENSHOT_ICON.name()));
+        scrnpath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(SCREENSHOT_ICON.name()));
         scrnshotButton = setToolbarButton(scrnpath,
                 manager.getPropertyValue(AppPropertyTypes.SCREENSHOT_TOOLTIP.name()),
                 true);
@@ -126,6 +132,7 @@ public final class AppUI extends UITemplate {
             });
             loadButton.setOnAction(e ->
             {
+                displayButton.setVisible(false);
                 applicationTemplate.getActionComponent().handleLoadRequest();
                 if(((AppData)applicationTemplate.getDataComponent()).numLabels() != 2)
                     classification.setDisable(true);
@@ -188,9 +195,10 @@ public final class AppUI extends UITemplate {
         textArea = new TextArea();
 
         HBox processButtonsBox = new HBox();
-       // Image cameraIcon = new Image(getClass().getClassLoader().getResourceAsStream("@display.png"));
-        //ImageView cameraIconView = new ImageView(cameraIcon);
-       displayButton = new Button(manager.getPropertyValue(AppPropertyTypes.DISPLAY_BUTTON_TEXT.name()));
+        String iconsPath = SEPARATOR + String.join("/", manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+        String playPath = String.join("/", iconsPath, manager.getPropertyValue(PLAY_ICON.name()));
+        displayButton = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(playPath))));
 
          info = new Label();
          //info.setMaxSize(windowWidth * 0.29, windowHeight * 0.50);
@@ -218,18 +226,18 @@ public final class AppUI extends UITemplate {
         algoTitle = new Label(applicationTemplate.manager.getPropertyValue(ALGO_VBOX_TITLE.name()));
         algv.getChildren().addAll(algoTitle,clustering,classification);
 
-
+        //Buttons for algorithms
         rclassBox = new HBox();
         rclusBox = new HBox();
-        String iconsPath = SEPARATOR + String.join("/", manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
-                manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
-        scrnpath = String.join("/", iconsPath, manager.getPropertyValue(CONFIG_ICON.name()));
-        classConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(scrnpath))));
-        clusConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(scrnpath))));
+        String configPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(CONFIG_ICON.name()));
+        classConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(configPath))));
+        clusConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(configPath))));
 
         rclass = new RadioButton(applicationTemplate.manager.getPropertyValue(RANDOM_CLASSIFICATION.name()));
         rclus = new RadioButton(applicationTemplate.manager.getPropertyValue(RANDOM_CLUSTERING.name()));
 
+        Tooltip.install(clusConfig,new Tooltip(applicationTemplate.manager.getPropertyValue(AppPropertyTypes.CONFIG_TOOLTIP.name())));
+        Tooltip.install(classConfig,new Tooltip(applicationTemplate.manager.getPropertyValue(AppPropertyTypes.CONFIG_TOOLTIP.name())));
         classConfig.setDisable(true);
         clusConfig.setDisable(true);
 
@@ -241,12 +249,9 @@ public final class AppUI extends UITemplate {
 
         HBox.setHgrow(processButtonsBox, Priority.ALWAYS);
         processButtonsBox.setSpacing(20);
-        //checkBox.setSelected(false);
-        //processButtonsBox.getChildren().addAll(checkBox);
 
         leftPanel.getChildren().addAll(leftPanelTitle, textArea,info, processButtonsBox,ed,algv,displayButton);
         algv.getChildren().clear();
-
 
         StackPane rightPanel = new StackPane(chart);
         rightPanel.setMaxSize(windowWidth * 0.69, windowHeight * 0.69);
@@ -262,6 +267,9 @@ public final class AppUI extends UITemplate {
 
         leftVisiblity(false);
         newButton.setDisable(false);
+
+        displayButton.setVisible(false);
+
     }
 
     private void setWorkspaceActions() {
@@ -270,6 +278,7 @@ public final class AppUI extends UITemplate {
         setAlgTypeAction();
         toggleActions();
         algActions();
+        configAction();
     }
 
     private void setTextAreaActions() {
@@ -429,6 +438,7 @@ public final class AppUI extends UITemplate {
        if(loaded)
           ed.setVisible(true);
        textArea.setEditable(true);
+       displayButton.setVisible(false);
        textArea.setStyle( "-fx-text-fill: black");
        edit.setDisable(true);
        done.setDisable(false);
@@ -441,7 +451,6 @@ public final class AppUI extends UITemplate {
    {
        leftPanelTitle.setVisible(bool);
        textArea.setVisible(bool);
-       displayButton.setVisible(bool);
        edit.setVisible(bool);
        done.setVisible(bool);
    }
@@ -466,12 +475,13 @@ public final class AppUI extends UITemplate {
         clustering.setOnAction( e -> {
             algv.getChildren().clear();
             algv.getChildren().addAll(new Label(applicationTemplate.manager.getPropertyValue(CLUSTERING.name())),rclusBox);
+            cluster = true;
         });
 
         classification.setOnAction( e -> {
-
             algv.getChildren().clear();
             algv.getChildren().addAll(new Label(applicationTemplate.manager.getPropertyValue(CLASSIFICATION.name())),rclassBox);
+            cluster = false;
         });
     }
 
@@ -514,16 +524,77 @@ public final class AppUI extends UITemplate {
             configDialog();
         });
 
+        clusConfig.setOnAction( e -> {
+            configDialog();
+        });
+
     }
+
 
     private void configDialog()
     {
+        GridPane pane = new GridPane();
         Stage stage = new Stage();
-        final Popup popup = new Popup();
-        popup.setX(300);
-        popup.setY(200);
-        popup.getContent().addAll(new TextArea("hello"));
-        popup.show(stage);
+        Scene scene = new Scene(pane,400,400);
+        VBox vbox = new VBox();
+
+        HBox iterationBox = new HBox();
+        Label iterationLabel = new Label("Max. Iterations:");
+        TextField area1 = new TextField();
+        area1.setText(Integer.toString(iterations));
+        iterationBox.getChildren().addAll(iterationLabel,area1);
+        iterationBox.setSpacing(15);
+
+        HBox intervalBox = new HBox();
+        Label intervalLabel = new Label("Update Interval:");
+        TextField area2 = new TextField();
+        area2.setText(Integer.toString(interval));
+        intervalBox.getChildren().addAll(intervalLabel,area2);
+        intervalBox.setSpacing(15);
+
+        HBox clusterBox = new HBox();
+        TextField area3 = new TextField();
+        area3.setText(Integer.toString(labels));
+        if(cluster){
+            Label clusterLabel = new Label("Labels:");
+            clusterBox.getChildren().addAll(clusterLabel,area3);
+            clusterBox.setSpacing(25);
+        }
+
+
+        HBox crunBox = new HBox();
+        CheckBox check = new CheckBox();
+        if(continuous)
+            check.setSelected(true);
+        else
+            check.setSelected(false);
+
+        Label crunLabel = new Label("Continuous Run?");
+        crunBox.getChildren().addAll(crunLabel,check);
+        crunBox.setSpacing(15);
+
+        Button done = new Button("Done");
+        done.setOnAction( e -> {
+            iterations = Integer.parseInt(area1.getText());
+            interval =  Integer.parseInt(area2.getText());
+            if(cluster){
+                labels = Integer.parseInt(area3.getText());
+            }
+            if(check.isSelected())
+                continuous = true;
+            else
+                continuous = false;
+
+            displayButton.setVisible(true);
+         stage.close();
+        });
+
+        vbox.setSpacing(20);
+        vbox.getChildren().addAll(iterationBox,intervalBox,clusterBox,crunBox,done);
+        pane.getChildren().add(vbox);
+        stage.setScene(scene);
+        pane.setAlignment(Pos.CENTER);
+
         stage.show();
     }
 

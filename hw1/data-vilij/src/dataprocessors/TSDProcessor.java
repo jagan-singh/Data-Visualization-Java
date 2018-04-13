@@ -137,17 +137,20 @@ public final class TSDProcessor {
     public String instances(String path) {
         String str = String.valueOf(dataLabels.entrySet().size());
         String labels = "";
-        Map<String, String> ulabels = new HashMap();
-        for (Map.Entry<String, String> ent : dataLabels.entrySet())
-            ulabels.put(ent.getValue(), ent.getKey());
-        for (Map.Entry<String, String> ent : ulabels.entrySet())
+        Map<String, String> map = new HashMap();
+        for (Map.Entry<String, String> temp : dataLabels.entrySet())
+            if(!temp.getValue().equals("null"))
+                map.put(temp.getValue(), temp.getKey());
+        for (Map.Entry<String, String> ent : map.entrySet())
             labels += "-" + ent.getKey() + "\n";
-        str += " instances with " + ulabels.entrySet().size() + " labels loaded from " + path + " .The labels are:\n" + labels;
-        numOfLabels = ulabels.size();
+        str += " instances with " + map.entrySet().size() + " labels loaded from " + path + " .The labels are:\n" + labels;
+        numOfLabels = map.size();
         return str;
     }
 
     public int getNumOfLabels() {
         return numOfLabels;
     }
+
+
 }
