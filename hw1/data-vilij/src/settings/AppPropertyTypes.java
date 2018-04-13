@@ -39,7 +39,6 @@ public enum AppPropertyTypes {
     LEFT_PANE_TITLE,
     LEFT_PANE_TITLEFONT,
     LEFT_PANE_TITLESIZE,
-    DISPLAY_BUTTON_TEXT,
 
     /* application-specific parameters */
     DATA_FILE_EXT,
@@ -52,5 +51,11 @@ public enum AppPropertyTypes {
     CLUSTERING,
     CLASSIFICATION,
     RANDOM_CLASSIFICATION,
-    RANDOM_CLUSTERING
+    RANDOM_CLUSTERING,
+    MAX_ITERATIONS,
+    UPDATE_INTERVAL,
+    LABELS,
+    CONTINUE,
+    CONFIG_ERROR_TITLE,
+    CONFIG_ERROR
 }

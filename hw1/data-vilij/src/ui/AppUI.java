@@ -1,7 +1,6 @@
 package ui;
 
 import actions.AppActions;
-import classification.RandomClassifier;
 import data.DataSet;
 import dataprocessors.AppData;
 import javafx.geometry.Pos;
@@ -15,7 +14,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.geometry.Insets;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import settings.AppPropertyTypes;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,8 +22,6 @@ import vilij.components.ErrorDialog;
 import vilij.propertymanager.PropertyManager;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
-import javafx.stage.Popup;
-import javafx.stage.Window;
 import static settings.AppPropertyTypes.*;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
@@ -72,10 +68,13 @@ public final class AppUI extends UITemplate {
     private HBox rclassBox;
     private HBox rclusBox;
     private boolean cluster;
-    private int iterations = 0;
-    private int interval = 0;
+    private int classiIterations = 0;
+    private int classiInterval = 0;
+    private boolean classiRun = false;
+    private int clusterIterations = 0;
+    private int clusterInterval = 0;
+    private boolean clusterRun = false;
     private int labels = 0;
-    private boolean continuous = false;
     DataSet set;
 
 
@@ -200,8 +199,7 @@ public final class AppUI extends UITemplate {
         String playPath = String.join("/", iconsPath, manager.getPropertyValue(PLAY_ICON.name()));
         displayButton = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(playPath))));
 
-         info = new Label();
-         //info.setMaxSize(windowWidth * 0.29, windowHeight * 0.50);
+        info = new Label();
         info.setWrapText(true);
 
        //toggle buttons
@@ -336,6 +334,7 @@ public final class AppUI extends UITemplate {
                 scrnshotButton.setDisable(true);
             else
                 scrnshotButton.setDisable(false);
+
         });
     }
 
@@ -431,6 +430,7 @@ public final class AppUI extends UITemplate {
        saveButton.setDisable(true);
        algv.getChildren().clear();
        algv.getChildren().addAll(algoTitle,classification,clustering);
+       radioSelection(false);
    }
 
    public void newAct()
@@ -445,6 +445,12 @@ public final class AppUI extends UITemplate {
        leftVisiblity(true);
        info.setText("");
        algv.getChildren().clear();
+       radioSelection(false);
+   }
+
+   private void radioSelection(boolean bool){
+       rclass.setSelected(bool);
+       rclus.setSelected(bool);
    }
 
    public void leftVisiblity(boolean bool)
@@ -487,35 +493,15 @@ public final class AppUI extends UITemplate {
 
     private void algActions()
     {
-
         rclass.setOnAction( e -> {
             rclass.setSelected(true);
             classConfig.setDisable(false);
-
         });
 
         rclus.setOnAction( e -> {
             rclus.setSelected(true);
             clusConfig.setDisable(false);
         });
-    }
-
-
-    private DataSet something(String str)
-    {
-        set = new DataSet();
-        if(loaded)
-          str = fileData;
-        else
-          str = textArea.getText();
-
-        String lines[] = str.split("\\r?\\n");
-        for(int i=0;i<lines.length;i++)
-        {
-                //set.addInstance(lines[i]);
-
-        }
-        return set;
     }
 
     private void configAction()
@@ -527,9 +513,18 @@ public final class AppUI extends UITemplate {
         clusConfig.setOnAction( e -> {
             configDialog();
         });
-
     }
 
+    private void configError()
+    {
+        PropertyManager manager = applicationTemplate.manager;
+        ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+        String errTitle = manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR_TITLE.name());
+        String errMsg = manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR.name());
+        dialog.show(errTitle, errMsg);
+        dialog.toFront();
+        dialog.setAlwaysOnTop(true);
+    }
 
     private void configDialog()
     {
@@ -539,63 +534,90 @@ public final class AppUI extends UITemplate {
         VBox vbox = new VBox();
 
         HBox iterationBox = new HBox();
-        Label iterationLabel = new Label("Max. Iterations:");
+        Label iterationLabel = new Label(applicationTemplate.manager.getPropertyValue(MAX_ITERATIONS.name()));
         TextField area1 = new TextField();
-        area1.setText(Integer.toString(iterations));
+
         iterationBox.getChildren().addAll(iterationLabel,area1);
         iterationBox.setSpacing(15);
 
         HBox intervalBox = new HBox();
-        Label intervalLabel = new Label("Update Interval:");
+        Label intervalLabel = new Label(applicationTemplate.manager.getPropertyValue(UPDATE_INTERVAL.name()));
         TextField area2 = new TextField();
-        area2.setText(Integer.toString(interval));
+
         intervalBox.getChildren().addAll(intervalLabel,area2);
         intervalBox.setSpacing(15);
 
         HBox clusterBox = new HBox();
         TextField area3 = new TextField();
         area3.setText(Integer.toString(labels));
-        if(cluster){
-            Label clusterLabel = new Label("Labels:");
-            clusterBox.getChildren().addAll(clusterLabel,area3);
-            clusterBox.setSpacing(25);
-        }
-
 
         HBox crunBox = new HBox();
         CheckBox check = new CheckBox();
-        if(continuous)
-            check.setSelected(true);
-        else
-            check.setSelected(false);
 
-        Label crunLabel = new Label("Continuous Run?");
+        if(cluster) {
+            area1.setText(Integer.toString(clusterIterations));
+            area2.setText(Integer.toString(clusterInterval));
+            Label clusterLabel = new Label(applicationTemplate.manager.getPropertyValue(LABELS.name()));
+            clusterBox.getChildren().addAll(clusterLabel,area3);
+            clusterBox.setSpacing(25);
+            if(clusterRun)
+                check.setSelected(true);
+            else
+                check.setSelected(false);
+        }
+        else {
+            area1.setText(Integer.toString(classiIterations));
+            area2.setText(Integer.toString(classiInterval));
+            if(classiRun)
+                check.setSelected(true);
+            else
+                check.setSelected(false);
+        }
+
+        Label crunLabel = new Label(applicationTemplate.manager.getPropertyValue(CONTINUE.name()));
         crunBox.getChildren().addAll(crunLabel,check);
         crunBox.setSpacing(15);
 
-        Button done = new Button("Done");
-        done.setOnAction( e -> {
-            iterations = Integer.parseInt(area1.getText());
-            interval =  Integer.parseInt(area2.getText());
-            if(cluster){
-                labels = Integer.parseInt(area3.getText());
+        Button donne = new Button(applicationTemplate.manager.getPropertyValue(DONE.name()));
+        donne.setOnAction( e -> {
+            if(cluster) {
+                if (area1.getText().matches("\\d+") && area2.getText().matches("\\d+") && area3.getText().matches("\\d+")) {
+                    clusterIterations = Integer.parseInt(area1.getText());
+                    clusterInterval = Integer.parseInt(area2.getText());
+                    labels = Integer.parseInt(area3.getText());
+                    if (check.isSelected())
+                        clusterRun = true;
+                    else
+                        clusterRun = false;
+                    displayButton.setVisible(true);
+                    stage.close();
+                }
+                else{
+                    configError();
+                }
             }
-            if(check.isSelected())
-                continuous = true;
             else
-                continuous = false;
-
-            displayButton.setVisible(true);
-         stage.close();
+            {
+                if (area1.getText().matches("\\d+") && area2.getText().matches("\\d+")) {
+                    classiIterations = Integer.parseInt(area1.getText());
+                    classiInterval = Integer.parseInt(area2.getText());
+                    if (check.isSelected())
+                        classiRun = true;
+                    else
+                        classiRun = false;
+                    displayButton.setVisible(true);
+                    stage.close();
+                }
+                else
+                    configError();
+            }
         });
 
         vbox.setSpacing(20);
-        vbox.getChildren().addAll(iterationBox,intervalBox,clusterBox,crunBox,done);
+        vbox.getChildren().addAll(iterationBox,intervalBox,clusterBox,crunBox,donne);
         pane.getChildren().add(vbox);
         stage.setScene(scene);
         pane.setAlignment(Pos.CENTER);
-
         stage.show();
     }
-
 }

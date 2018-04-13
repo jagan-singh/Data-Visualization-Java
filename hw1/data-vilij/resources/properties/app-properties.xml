@@ -35,6 +35,8 @@ functionality within the main workspace. -->
 
         <property name="DUPLICATES_TITLE" value="Duplicates"/>
         <property name="DUPLICATES" value="Duplicates in data"/>
+        <property name="CONFIG_ERROR_TITLE" value="Error in Configuration"/>
+        <property name="CONFIG_ERROR" value="Data not valid"/>
 
         <!-- APPLICATION-SPECIFIC PARAMETERS -->
         <property name="DATA_FILE_EXT" value=".tsd"/>
@@ -45,7 +47,6 @@ functionality within the main workspace. -->
         <property name="LEFT_PANE_TITLEFONT" value="SansSerif"/>
         <property name="LEFT_PANE_TITLESIZE" value="18"/>
         <property name="CHART_TITLE" value="Data Visualization"/>
-        <property name="DISPLAY_BUTTON_TEXT" value="Display"/>
 
         <property name="EDIT" value="Edit"/>
         <property name="DONE" value="Done"/>
@@ -54,6 +55,10 @@ functionality within the main workspace. -->
         <property name="CLASSIFICATION" value="Classification"/>
         <property name="RANDOM_CLUSTERING" value="Random Clustering"/>
         <property name="RANDOM_CLASSIFICATION" value="Random Classification"/>
+        <property name="MAX_ITERATIONS" value="Max. Iterations:"/>
+        <property name="UPDATE_INTERVAL" value="Update Interval:"/>
+        <property name="LABELS" value="Labels:"/>
+        <property name="CONTINUE" value="Continuous Run?"/>
     </property_list>
     <property_options_list/>
 </properties>
