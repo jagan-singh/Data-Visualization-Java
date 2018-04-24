@@ -76,11 +76,11 @@ public final class AppUI extends UITemplate {
     private HBox rclassBox;
     private HBox rclusBox;
     private boolean cluster;
-    private int classiIterations = 0;
-    private int classiInterval = 0;
+    private int classiIterations = 100;
+    private int classiInterval = 5;
     private boolean classiRun = false;
-    private int clusterIterations = 0;
-    private int clusterInterval = 0;
+    private int clusterIterations = 100;
+    private int clusterInterval = 5;
     private boolean clusterRun = false;
     private int labels = 0;
     private boolean play = true;
@@ -88,6 +88,7 @@ public final class AppUI extends UITemplate {
     DataSet set;
     RandomClassifier classifier;
     TSDProcessor processor;
+    private boolean unConti = true;
 
 
 
@@ -318,7 +319,7 @@ public final class AppUI extends UITemplate {
     private void setDisplayButtonActions() {
         PropertyManager manager = applicationTemplate.manager;
         displayButton.setOnAction(event -> {
-           chart.setLegendVisible(false);
+           //chart.setLegendVisible(false);
             chart.getData().clear();
             AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
             dataComponent.clear();
@@ -367,7 +368,19 @@ public final class AppUI extends UITemplate {
                 play = true;
             }
 
-            algorithmRun();
+            if(classiRun)
+            {
+                algorithmRun();
+            }
+            else if(unConti) {
+                algorithmRun();
+            }
+            else {
+                synchronized (classifier) {
+                    classifier.notify();
+                }
+            }
+
 
         });
     }
@@ -452,9 +465,11 @@ public final class AppUI extends UITemplate {
                 else
                     classification.setDisable(false);
                 try {
-                    setSet(new File(textArea.getText()).toPath());
+                    File file = new File(textArea.getText());
+                    setSet(file.toPath());
                 } catch (IOException e1) {
-                    e1.printStackTrace();
+                    System.out.println("huhlhlhlh");
+                    System.err.println(e1.getMessage());
                 }
             }
         });
@@ -629,7 +644,7 @@ public final class AppUI extends UITemplate {
                     else
                         clusterIterations = Integer.parseInt(area1.getText());
 
-                    if(Integer.parseInt(area2.getText()) < 0){
+                    if(Integer.parseInt(area2.getText()) <= 0){
                         area2.setText("1");
                         clusterInterval = 1;
                     }
@@ -667,7 +682,7 @@ public final class AppUI extends UITemplate {
                     else
                         classiIterations = Integer.parseInt(area1.getText());
 
-                    if(Integer.parseInt(area2.getText()) < 0){
+                    if(Integer.parseInt(area2.getText()) <= 0){
                         area2.setText("1");
                         classiInterval = 1;
                     }
@@ -707,10 +722,19 @@ public final class AppUI extends UITemplate {
         classifier.setXmax(dataComponent.forXmax());
         classifier.setXmin(dataComponent.forXmin());
         Thread thread = new Thread(classifier);
-        //classifier.run();
         thread.start();
+        unConti = false;
+    }
+
+    public void screenActions(boolean bool)
+    {
+    scrnshotButton.setDisable(bool);
     }
 
 
+    public void runActions(boolean bool)
+    {
+        displayButton.setDisable(bool);
+    }
 
 }

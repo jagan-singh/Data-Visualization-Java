@@ -74,9 +74,10 @@ public class RandomClassifier extends Classifier {
     }
 
     @Override
-    public void run() {
-
-        for (int i = 1; i <= maxIterations && tocontinue(); i++) {
+    public synchronized void run() {
+        ((AppUI) applicationTemplate.getUIComponent()).screenActions(true);
+        ((AppUI) applicationTemplate.getUIComponent()).runActions(true);
+        for (int i = 1; i <= maxIterations; i++) {
             int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
             int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
             int constant     = new Double(RAND.nextDouble() * 100).intValue();
@@ -86,16 +87,27 @@ public class RandomClassifier extends Classifier {
             bigList.add(output);
             ymin =  -(constant + (xCoefficient * xmin)) / yCoefficient;
             ymax =  -(constant + (xCoefficient * xmax)) / yCoefficient;
-            ser = new XYChart.Series<>();
-            ser.getData().add(new XYChart.Data<>(xmin, ymin));
-            ser.getData().add(new XYChart.Data<>(xmax, ymax));
 
             try {
-                Platform.runLater(()->  ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().add(ser)
-                );
-                Thread.sleep(400);
-                Platform.runLater(()-> ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().remove(ser));
-                Thread.sleep(400);
+
+
+               // if(!(i == maxIterations)) {
+                    Platform.runLater(() -> ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().remove(ser));
+                 //   System.out.println(i);
+               // }
+
+
+                Platform.runLater(()-> {
+                    ser = new XYChart.Series<>();
+
+                    ser.setName("Classification");
+                       ser.getData().add(new XYChart.Data<>(xmin, ymin));
+                     ser.getData().add(new XYChart.Data<>(xmax, ymax));
+
+                ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().add(ser);
+                });
+                Thread.sleep(600);
+
             } catch (InterruptedException e) {
                 System.err.println(e.getMessage());
             }
@@ -111,7 +123,20 @@ public class RandomClassifier extends Classifier {
                 flush();
                 break;
             }
+            if(!tocontinue()) {
+                try {
+                    ((AppUI) applicationTemplate.getUIComponent()).runActions(false);
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
+        ((AppUI) applicationTemplate.getUIComponent()).screenActions(false);
+        ((AppUI) applicationTemplate.getUIComponent()).runActions(false);
+        System.out.println("done");
+
     }
 
     public List<List<Integer>> getBigList()
