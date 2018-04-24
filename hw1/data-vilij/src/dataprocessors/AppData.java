@@ -16,6 +16,7 @@ import java.io.IOException;
 
 
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * This is the concrete application-specific implementation of the data component defined by the Vilij framework.
@@ -79,5 +80,16 @@ public class AppData implements DataComponent {
     {
         return processor.getNumOfLabels();
     }
+
+    public double forXmin()
+    {
+        return  processor.getxMin();
+    }
+
+    public double forXmax()
+    {
+        return  processor.getxMax();
+    }
+
 }
 

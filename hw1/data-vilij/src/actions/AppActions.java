@@ -115,17 +115,23 @@ public final class AppActions implements ActionComponent  {
                     ErrorDialog dialog = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
                     PropertyManager manager = applicationTemplate.manager;
                     dialog.show("Loaded Data", "Loaded data consists of " + list.size() + " lines. Showing the first 10 lines in the text area.");
-                    ui.setFileData(lines);
                     String ten = new String();
                     for(int i=0;i<10;i++) {
                         ten += list.get(i) + '\n';
                     }
                     ui.setTextArea(ten);
                 }
+                    ui.setFileData(lines);
                     ui.setLoaded(true);
                     ui.loaded();
                     ui.leftVisiblity(true);
                     ui.infoMsg(file.getPath());
+                    try {
+                        ui.setSet(file.toPath());
+                    }
+                    catch (IOException ex) {
+                        System.err.println(ex.getMessage());
+                    }
             }
             scanner.close();
             } catch (FileNotFoundException ex) {

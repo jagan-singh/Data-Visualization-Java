@@ -20,6 +20,7 @@
 .chart-vertical-zero-line  {
     -fx-stroke: transparent;
 }
+
 .axis Text{
     -fx-fill: red;
 }

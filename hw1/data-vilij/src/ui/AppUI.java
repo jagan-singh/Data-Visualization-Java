@@ -1,18 +1,26 @@
 package ui;
 
 import actions.AppActions;
+import classification.RandomClassifier;
 import data.DataSet;
 import dataprocessors.AppData;
+import dataprocessors.TSDProcessor;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.chart.NumberAxis;
 import javafx.stage.Stage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.sql.SQLOutput;
+import java.util.List;
+
 import javafx.geometry.Insets;
 import settings.AppPropertyTypes;
 import javafx.scene.image.Image;
@@ -75,7 +83,11 @@ public final class AppUI extends UITemplate {
     private int clusterInterval = 0;
     private boolean clusterRun = false;
     private int labels = 0;
+    private boolean play = true;
+    Stage configStage;
     DataSet set;
+    RandomClassifier classifier;
+    TSDProcessor processor;
 
 
 
@@ -304,15 +316,22 @@ public final class AppUI extends UITemplate {
     }
 
     private void setDisplayButtonActions() {
+        PropertyManager manager = applicationTemplate.manager;
         displayButton.setOnAction(event -> {
+           chart.setLegendVisible(false);
+            chart.getData().clear();
+            AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
+            dataComponent.clear();
             if(loaded){
-                chart.getData().clear();
-                AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
-                dataComponent.clear();
                 dataComponent.loadData(fileData);
                 dataComponent.displayData();
             }
             else
+            {
+                dataComponent.loadData(textArea.getText());
+                dataComponent.displayData();
+            }
+           /* else
             if(textArea.getText().equals("")) {
                 chart.getData().clear();
                 scrnshotButton.setDisable(true);
@@ -329,11 +348,26 @@ public final class AppUI extends UITemplate {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
             if(chart.getData().size() == 0)
                 scrnshotButton.setDisable(true);
             else
                 scrnshotButton.setDisable(false);
+
+            String iconsPath = SEPARATOR + String.join(SEPARATOR, manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                    manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+            if(play){
+            String pausePath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(PAUSE_ICON.name()));
+            displayButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream(pausePath))));
+            play = false;
+            }
+            else {
+                String playPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(PLAY_ICON.name()));
+                displayButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream(playPath))));
+                play = true;
+            }
+
+            algorithmRun();
 
         });
     }
@@ -417,6 +451,11 @@ public final class AppUI extends UITemplate {
                     classification.setDisable(true);
                 else
                     classification.setDisable(false);
+                try {
+                    setSet(new File(textArea.getText()).toPath());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
@@ -515,21 +554,18 @@ public final class AppUI extends UITemplate {
         });
     }
 
-    private void configError()
+    private void configError(String title,String msg)
     {
-        PropertyManager manager = applicationTemplate.manager;
         ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-        String errTitle = manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR_TITLE.name());
-        String errMsg = manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR.name());
-        dialog.show(errTitle, errMsg);
-        dialog.toFront();
         dialog.setAlwaysOnTop(true);
+        dialog.show(title,msg);
     }
 
     private void configDialog()
     {
+        PropertyManager manager = applicationTemplate.manager;
         GridPane pane = new GridPane();
-        Stage stage = new Stage();
+        configStage = new Stage();
         Scene scene = new Scene(pane,400,400);
         VBox vbox = new VBox();
 
@@ -581,43 +617,100 @@ public final class AppUI extends UITemplate {
         Button donne = new Button(applicationTemplate.manager.getPropertyValue(DONE.name()));
         donne.setOnAction( e -> {
             if(cluster) {
-                if (area1.getText().matches("\\d+") && area2.getText().matches("\\d+") && area3.getText().matches("\\d+")) {
-                    clusterIterations = Integer.parseInt(area1.getText());
-                    clusterInterval = Integer.parseInt(area2.getText());
-                    labels = Integer.parseInt(area3.getText());
+                if (area1.getText().matches("-?\\d+") && area2.getText().matches("-?\\d+") && area3.getText().matches("-?\\d+")) {
+
+                    if(Integer.parseInt(area1.getText()) < 0 || Integer.parseInt(area2.getText()) < 0 || Integer.parseInt(area3.getText()) < 0 )
+                        configError(manager.getPropertyValue(AppPropertyTypes.NEGATIVE_TITLE.name()),manager.getPropertyValue(AppPropertyTypes.NEGATIVE_MSG.name()));
+
+                    if(Integer.parseInt(area1.getText()) < 0){
+                        area1.setText("1");
+                        clusterIterations = 1;
+                    }
+                    else
+                        clusterIterations = Integer.parseInt(area1.getText());
+
+                    if(Integer.parseInt(area2.getText()) < 0){
+                        area2.setText("1");
+                        clusterInterval = 1;
+                    }
+                    else
+                        clusterInterval = Integer.parseInt(area2.getText());
+
+                    if(Integer.parseInt(area3.getText()) < 0){
+                        area3.setText("1");
+                        labels = 1;
+                    }
+                    else
+                        labels = Integer.parseInt(area2.getText());
+
                     if (check.isSelected())
                         clusterRun = true;
                     else
                         clusterRun = false;
                     displayButton.setVisible(true);
-                    stage.close();
+                    configStage.close();
                 }
                 else{
-                    configError();
+                    configError(manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR_TITLE.name()),manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR.name()));
                 }
             }
             else
             {
-                if (area1.getText().matches("\\d+") && area2.getText().matches("\\d+")) {
-                    classiIterations = Integer.parseInt(area1.getText());
-                    classiInterval = Integer.parseInt(area2.getText());
+                if (area1.getText().matches("-?\\d+") && area2.getText().matches("-?\\d+")) {
+                    if(Integer.parseInt(area1.getText()) < 0 || Integer.parseInt(area2.getText()) < 0)
+                        configError(manager.getPropertyValue(AppPropertyTypes.NEGATIVE_TITLE.name()),manager.getPropertyValue(AppPropertyTypes.NEGATIVE_MSG.name()));
+
+                    if(Integer.parseInt(area1.getText()) < 0){
+                        area1.setText("1");
+                        classiIterations = 1;
+                    }
+                    else
+                        classiIterations = Integer.parseInt(area1.getText());
+
+                    if(Integer.parseInt(area2.getText()) < 0){
+                        area2.setText("1");
+                        classiInterval = 1;
+                    }
+                    else
+                        classiInterval = Integer.parseInt(area2.getText());
+
+
                     if (check.isSelected())
                         classiRun = true;
                     else
                         classiRun = false;
+
                     displayButton.setVisible(true);
-                    stage.close();
+                    configStage.close();
                 }
                 else
-                    configError();
+                    configError(manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR_TITLE.name()),manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR.name()));
             }
         });
 
         vbox.setSpacing(20);
         vbox.getChildren().addAll(iterationBox,intervalBox,clusterBox,crunBox,donne);
         pane.getChildren().add(vbox);
-        stage.setScene(scene);
+        configStage.setScene(scene);
         pane.setAlignment(Pos.CENTER);
-        stage.show();
+        configStage.setAlwaysOnTop(true);
+        configStage.show();
     }
+
+    public void setSet(Path filePath) throws IOException {
+           set =  DataSet.fromTSDFile(filePath);
+    }
+
+    public void algorithmRun(){
+        AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
+        classifier = new RandomClassifier(set,classiIterations,classiInterval,classiRun,applicationTemplate);
+        classifier.setXmax(dataComponent.forXmax());
+        classifier.setXmin(dataComponent.forXmin());
+        Thread thread = new Thread(classifier);
+        //classifier.run();
+        thread.start();
+    }
+
+
+
 }

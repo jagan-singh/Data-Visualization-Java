@@ -15,6 +15,10 @@ functionality within the main workspace. -->
 
         <property name="CONFIG_ICON" value="config.png"/>
         <property name="PLAY_ICON" value="play.png"/>
+        <property name="PAUSE_ICON" value="pause.png"/>
+
+        <property name="NEGATIVE_TITLE" value="Negative Numbers"/>
+        <property name="NEGATIVE_MSG" value="Negative Numbers are not allowed and are changed to 1."/>
 
         <property name="CONFIG_TOOLTIP" value="Configuration"/>
 

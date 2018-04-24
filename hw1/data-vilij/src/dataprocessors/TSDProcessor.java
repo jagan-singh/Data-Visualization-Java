@@ -10,6 +10,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import ui.AppUI;
+import vilij.templates.ApplicationTemplate;
 
 /**
  * The data files used by this data visualization applications follow a tab-separated format, where each data point is
@@ -35,6 +37,11 @@ public final class TSDProcessor {
     private Map<String, String> dataLabels;
     private Map<String, Point2D> dataPoints;
     private int numOfLabels;
+    private double xMax;
+    private double xMin;
+    private double yMax;
+    private double yMin;
+    LinkedList<Double> xList = new LinkedList();
 
     public TSDProcessor() {
         dataLabels = new HashMap<>();
@@ -51,6 +58,7 @@ public final class TSDProcessor {
     public void processString(String tsdString) throws Exception {
         AtomicBoolean hadAnError = new AtomicBoolean(false);
         StringBuilder errorMessage = new StringBuilder();
+
         Stream.of(tsdString.split("\n"))
                 .map(line -> Arrays.asList(line.split("\t")))
                 .forEach(list -> {
@@ -61,14 +69,21 @@ public final class TSDProcessor {
                         Point2D point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
                         dataLabels.put(name, label);
                         dataPoints.put(name, point);
+                        xList.add(point.getX());
                     } catch (Exception e) {
                         errorMessage.setLength(0);
                         errorMessage.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
                         hadAnError.set(true);
                     }
                 });
+
         if (errorMessage.length() > 0)
             throw new Exception(errorMessage.toString());
+
+        xMin = Collections.min(xList);
+        xMax = Collections.max(xList);
+
+
     }
 
     /**
@@ -103,7 +118,8 @@ public final class TSDProcessor {
                 counter++;
             }
         }
-        final Double yavg = yval / counter;
+
+       /* final Double yavg = yval / counter;
         XYChart.Series<Number, Number> avgser = new XYChart.Series<>();
         avgser.setName("Average Y");
         for (String label : labels) {
@@ -112,15 +128,14 @@ public final class TSDProcessor {
                 avgser.getData().add(new XYChart.Data<>(point.getX(), yavg));
             });
         }
-
         if (dataPoints.size() == 1) {
             avgser.getData().add(new XYChart.Data<>(0, yavg));
         }
         chart.getData().add(avgser);
-
         for (int i = 0; i < avgser.getData().size(); i++)
             avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
         avgser.getNode().setVisible(true);
+        */
     }
 
     void clear() {
@@ -139,7 +154,7 @@ public final class TSDProcessor {
         String labels = "";
         Map<String, String> map = new HashMap();
         for (Map.Entry<String, String> temp : dataLabels.entrySet())
-            if(!temp.getValue().equals("null"))
+            if (!temp.getValue().equals("null"))
                 map.put(temp.getValue(), temp.getKey());
         for (Map.Entry<String, String> ent : map.entrySet())
             labels += "-" + ent.getKey() + "\n";
@@ -152,5 +167,11 @@ public final class TSDProcessor {
         return numOfLabels;
     }
 
+    public double getxMax() {
+        return xMax;
+    }
 
+    public double getxMin() {
+        return xMin;
+    }
 }

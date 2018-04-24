@@ -57,5 +57,8 @@ public enum AppPropertyTypes {
     LABELS,
     CONTINUE,
     CONFIG_ERROR_TITLE,
-    CONFIG_ERROR
+    CONFIG_ERROR,
+    PAUSE_ICON,
+    NEGATIVE_TITLE,
+    NEGATIVE_MSG,
 }
