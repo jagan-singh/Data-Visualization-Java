@@ -108,7 +108,7 @@ public final class AppActions implements ActionComponent  {
             {
                 lines += list.get(i)+ '\n';
             }
-                if (ui.checkText(lines)) {
+                if (ui.checkText(lines) && ui.checkDuplicates(lines)) {
                 if(list.size() <= 10) {
                     ui.setTextArea(lines);
                 }else {

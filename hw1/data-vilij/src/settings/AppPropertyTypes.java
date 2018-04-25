@@ -61,4 +61,7 @@ public enum AppPropertyTypes {
     PAUSE_ICON,
     NEGATIVE_TITLE,
     NEGATIVE_MSG,
+    ALERT,
+    ALERT_HEADER,
+    ALERT_CONTEXT
 }

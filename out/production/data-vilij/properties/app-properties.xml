@@ -63,6 +63,11 @@ functionality within the main workspace. -->
         <property name="UPDATE_INTERVAL" value="Update Interval:"/>
         <property name="LABELS" value="Labels:"/>
         <property name="CONTINUE" value="Continuous Run?"/>
+        <property name="ALERT" value="Alert"/>
+        <property name="ALERT_HEADER" value="Non-Continuous run is selected"/>
+        <property name="ALERT_CONTEXT" value="Press play after every iteration"/>
+
+
     </property_list>
     <property_options_list/>
 </properties>

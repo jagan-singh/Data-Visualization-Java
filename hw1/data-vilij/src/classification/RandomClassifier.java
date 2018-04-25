@@ -75,12 +75,12 @@ public class RandomClassifier extends Classifier {
 
     @Override
     public synchronized void run() {
-        ((AppUI) applicationTemplate.getUIComponent()).screenActions(true);
-        ((AppUI) applicationTemplate.getUIComponent()).runActions(true);
+        ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(true);
+        ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(true);
         for (int i = 1; i <= maxIterations; i++) {
-            int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
-            int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
-            int constant     = new Double(RAND.nextDouble() * 100).intValue();
+            int xCoefficient = new Double(RAND.nextDouble() * 100).intValue() +1;
+            int yCoefficient = new Double(RAND.nextDouble() * 100).intValue() +1;
+            int constant     = new Double(RAND.nextDouble() * 100).intValue() +1;
 
             // this is the real output of the classifier
             output = Arrays.asList(xCoefficient, yCoefficient, constant);
@@ -89,22 +89,15 @@ public class RandomClassifier extends Classifier {
             ymax =  -(constant + (xCoefficient * xmax)) / yCoefficient;
 
             try {
-
-
-               // if(!(i == maxIterations)) {
                     Platform.runLater(() -> ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().remove(ser));
-                 //   System.out.println(i);
-               // }
-
-
-                Platform.runLater(()-> {
+                    Platform.runLater(()-> {
                     ser = new XYChart.Series<>();
-
                     ser.setName("Classification");
-                       ser.getData().add(new XYChart.Data<>(xmin, ymin));
-                     ser.getData().add(new XYChart.Data<>(xmax, ymax));
-
-                ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().add(ser);
+                    ser.getData().add(new XYChart.Data<>(xmin, ymin));
+                    ser.getData().add(new XYChart.Data<>(xmax, ymax));
+                    ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().add(ser);
+                        for (int j = 0; j < ser.getData().size(); j++)
+                            ser.getData().get(j).getNode().setStyle(" visibility: hidden");
                 });
                 Thread.sleep(600);
 
@@ -125,17 +118,20 @@ public class RandomClassifier extends Classifier {
             }
             if(!tocontinue()) {
                 try {
-                    ((AppUI) applicationTemplate.getUIComponent()).runActions(false);
+                    ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(false);
+                    ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(false);
                     wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.err.println(e.getMessage());
                 }
+                ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(true);
+                ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(true);
             }
-
         }
-        ((AppUI) applicationTemplate.getUIComponent()).screenActions(false);
-        ((AppUI) applicationTemplate.getUIComponent()).runActions(false);
-        System.out.println("done");
+        if(tocontinue()) {
+            ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(false);
+            ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(false);
+        }
 
     }
 

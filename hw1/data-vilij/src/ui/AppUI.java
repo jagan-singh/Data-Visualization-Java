@@ -8,7 +8,6 @@ import dataprocessors.TSDProcessor;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
@@ -17,10 +16,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.sql.SQLOutput;
-import java.util.List;
-
 import javafx.geometry.Insets;
 import settings.AppPropertyTypes;
 import javafx.scene.image.Image;
@@ -87,8 +84,7 @@ public final class AppUI extends UITemplate {
     Stage configStage;
     DataSet set;
     RandomClassifier classifier;
-    TSDProcessor processor;
-    private boolean unConti = true;
+    private boolean firstTime = true;
 
 
 
@@ -136,7 +132,7 @@ public final class AppUI extends UITemplate {
         });
             saveButton.setOnAction(e ->
             {
-                if(checkText(textArea.getText()) && checkDuplicates()) {
+                if(checkText(textArea.getText()) && checkDuplicates(textArea.getText())) {
                     applicationTemplate.getActionComponent().handleSaveRequest();
                     if (!((AppActions) applicationTemplate.getActionComponent()).getIsUnsavedProperty())
                         saveButton.setDisable(true);
@@ -144,6 +140,8 @@ public final class AppUI extends UITemplate {
             });
             loadButton.setOnAction(e ->
             {
+                chart.getData().clear();
+                applicationTemplate.getDataComponent().clear();
                 displayButton.setVisible(false);
                 applicationTemplate.getActionComponent().handleLoadRequest();
                 if(((AppData)applicationTemplate.getDataComponent()).numLabels() != 2)
@@ -190,6 +188,7 @@ public final class AppUI extends UITemplate {
         NumberAxis yAxis = new NumberAxis();
         chart = new LineChart<>(xAxis, yAxis);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
+        chart.setAnimated(false);
 
         leftPanel = new VBox(8);
         leftPanel.setAlignment(Pos.TOP_CENTER);
@@ -320,7 +319,7 @@ public final class AppUI extends UITemplate {
         PropertyManager manager = applicationTemplate.manager;
         displayButton.setOnAction(event -> {
            //chart.setLegendVisible(false);
-            chart.getData().clear();
+             chart.getData().clear();
             AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
             dataComponent.clear();
             if(loaded){
@@ -355,29 +354,19 @@ public final class AppUI extends UITemplate {
             else
                 scrnshotButton.setDisable(false);
 
-            String iconsPath = SEPARATOR + String.join(SEPARATOR, manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
-                    manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
-            if(play){
-            String pausePath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(PAUSE_ICON.name()));
-            displayButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream(pausePath))));
-            play = false;
-            }
-            else {
-                String playPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(PLAY_ICON.name()));
-                displayButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream(playPath))));
-                play = true;
-            }
-
-            if(classiRun)
-            {
+            if(classiRun) {
                 algorithmRun();
-            }
-            else if(unConti) {
-                algorithmRun();
-            }
-            else {
-                synchronized (classifier) {
-                    classifier.notify();
+                firstTime = true;
+            } else {
+                if(firstTime) {
+                    System.out.println("kjberf");
+                    algorithmRun();
+                    firstTime = false;
+                }
+                else {
+                    synchronized (classifier) {
+                        classifier.notify();
+                    }
                 }
             }
 
@@ -407,11 +396,10 @@ public final class AppUI extends UITemplate {
         return bool;
     }
 
-   private boolean checkDuplicates()
+   public boolean checkDuplicates(String str)
    {
        ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
        PropertyManager manager  = applicationTemplate.manager;
-       String str = textArea.getText();
        String lines[] = str.split("\\r?\\n");
        String[] first = new String[lines.length];
        for(int i=0;i<lines.length;i++)
@@ -451,7 +439,7 @@ public final class AppUI extends UITemplate {
         });
 
         done.setOnAction(e -> {
-            if (checkText(textArea.getText()) && checkDuplicates())
+            if (checkText(textArea.getText()) && checkDuplicates(textArea.getText()))
             {
                 done.setDisable(true);
                 edit.setDisable(false);
@@ -465,10 +453,12 @@ public final class AppUI extends UITemplate {
                 else
                     classification.setDisable(false);
                 try {
-                    File file = new File(textArea.getText());
+                    final File file = File.createTempFile("temp",".tsd");
+                    PrintWriter out = new PrintWriter("filename.txt");
+                    out.println(file);
                     setSet(file.toPath());
+                    file.deleteOnExit();
                 } catch (IOException e1) {
-                    System.out.println("huhlhlhlh");
                     System.err.println(e1.getMessage());
                 }
             }
@@ -664,6 +654,7 @@ public final class AppUI extends UITemplate {
                         clusterRun = false;
                     displayButton.setVisible(true);
                     configStage.close();
+                    firstTime = true;
                 }
                 else{
                     configError(manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR_TITLE.name()),manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR.name()));
@@ -692,10 +683,13 @@ public final class AppUI extends UITemplate {
 
                     if (check.isSelected())
                         classiRun = true;
-                    else
+                    else {
                         classiRun = false;
+                        alert();
+                    }
 
                     displayButton.setVisible(true);
+                    displayButton.setDisable(false);
                     configStage.close();
                 }
                 else
@@ -717,24 +711,34 @@ public final class AppUI extends UITemplate {
     }
 
     public void algorithmRun(){
-        AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
-        classifier = new RandomClassifier(set,classiIterations,classiInterval,classiRun,applicationTemplate);
-        classifier.setXmax(dataComponent.forXmax());
-        classifier.setXmin(dataComponent.forXmin());
-        Thread thread = new Thread(classifier);
-        thread.start();
-        unConti = false;
+        if(!cluster) {
+            AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
+            classifier = new RandomClassifier(set, classiIterations, classiInterval, classiRun, applicationTemplate);
+            classifier.setXmax(dataComponent.forXmax());
+            classifier.setXmin(dataComponent.forXmin());
+            Thread thread = new Thread(classifier);
+            thread.start();
+        }
     }
 
-    public void screenActions(boolean bool)
+    public void disableScreenshot(boolean bool)
     {
     scrnshotButton.setDisable(bool);
     }
 
-
-    public void runActions(boolean bool)
+    public void disableDisplay(boolean bool)
     {
         displayButton.setDisable(bool);
     }
 
+    private void alert()
+    {
+        PropertyManager manager = applicationTemplate.manager;
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(manager.getPropertyValue(AppPropertyTypes.ALERT.name()));
+        alert.setHeaderText(manager.getPropertyValue(AppPropertyTypes.ALERT_HEADER.name()));
+        alert.setContentText(manager.getPropertyValue(AppPropertyTypes.ALERT_CONTEXT.name()));
+        alert.initOwner(configStage);
+        alert.showAndWait();
+    }
 }
