@@ -13,17 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 
-
-
-import java.nio.file.Path;
-import java.util.List;
-
 /**
  * This is the concrete application-specific implementation of the data component defined by the Vilij framework.
  *
  * @author Ritwik Banerjee
  * @see DataComponent
  */
+
 public class AppData implements DataComponent {
 
     private TSDProcessor        processor;
@@ -37,7 +33,6 @@ public class AppData implements DataComponent {
     @Override
     public void loadData(Path dataFilePath) {
         // TODO: NOT A PART OF HW 1
-
     }
 
     public void loadData(String dataString){

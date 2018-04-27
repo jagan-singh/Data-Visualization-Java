@@ -26,6 +26,9 @@ functionality within the main workspace. -->
         <property name="EXIT_WHILE_RUNNING_WARNING"
                   value="An algorithms is running. If you exit now, all unsaved changes will be lost. Are you sure?"/>
 
+        <property name="ALGORITHM_RUNNING_TITLE"
+                  value="Algorithm is Running"/>
+
         <!-- ERROR MESSAGES -->
         <property name="RESOURCE_SUBDIR_NOT_FOUND" value="Directory not found under resources."/>
 

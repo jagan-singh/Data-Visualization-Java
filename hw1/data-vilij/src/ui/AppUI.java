@@ -4,7 +4,6 @@ import actions.AppActions;
 import classification.RandomClassifier;
 import data.DataSet;
 import dataprocessors.AppData;
-import dataprocessors.TSDProcessor;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -18,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
 import javafx.geometry.Insets;
 import settings.AppPropertyTypes;
 import javafx.scene.image.Image;
@@ -52,8 +52,6 @@ public final class AppUI extends UITemplate {
     private TextArea textArea;       // text area for new data input
     private boolean hasNewText;// whether or not the text area has any new data since last display
     private String scrnpath;
-    private String displayPath;
-    private CheckBox checkBox;
     private boolean loaded = false;
     private String fileData = new String();
     private ToggleButton edit;
@@ -81,12 +79,13 @@ public final class AppUI extends UITemplate {
     private boolean clusterRun = false;
     private int labels = 0;
     private boolean play = true;
-    Stage configStage;
-    DataSet set;
-    RandomClassifier classifier;
+    private Stage configStage;
+    private DataSet set;
+    private RandomClassifier classifier;
     private boolean firstTime = true;
-
-
+    private boolean algRunning = false;
+    private Label iteration;
+    public AtomicInteger iterations;
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
         super(primaryStage, applicationTemplate);
@@ -122,6 +121,7 @@ public final class AppUI extends UITemplate {
             try {
                 applicationTemplate.getActionComponent().handleNewRequest();
                 scrnshotButton.setDisable(true);
+                iteration.setText("");
             } catch (IOException e1) {
                 ErrorDialog dialog = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
                 dialog.show(AppPropertyTypes.DATA_RESOURCE_PATH.RESOURCE_SUBDIR_NOT_FOUND.name(), e1.getMessage());
@@ -140,14 +140,15 @@ public final class AppUI extends UITemplate {
             });
             loadButton.setOnAction(e ->
             {
+                applicationTemplate.getActionComponent().handleLoadRequest();
                 chart.getData().clear();
                 applicationTemplate.getDataComponent().clear();
                 displayButton.setVisible(false);
-                applicationTemplate.getActionComponent().handleLoadRequest();
                 if(((AppData)applicationTemplate.getDataComponent()).numLabels() != 2)
                     classification.setDisable(true);
                 else
                     classification.setDisable(false);
+                iteration.setText("");
             });
         exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
         printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
@@ -263,10 +264,15 @@ public final class AppUI extends UITemplate {
         leftPanel.getChildren().addAll(leftPanelTitle, textArea,info, processButtonsBox,ed,algv,displayButton);
         algv.getChildren().clear();
 
-        StackPane rightPanel = new StackPane(chart);
-        rightPanel.setMaxSize(windowWidth * 0.69, windowHeight * 0.69);
-        rightPanel.setMinSize(windowWidth * 0.69, windowHeight * 0.69);
+        iteration = new Label();
+        iteration.setTranslateY(-220);
+        iteration.setTranslateX(270);
+
+        StackPane rightPanel = new StackPane(chart,iteration);
+        rightPanel.setMaxSize(windowWidth * 0.69, windowHeight * 0.75);
+        rightPanel.setMinSize(windowWidth * 0.69, windowHeight * 0.75);
         StackPane.setAlignment(rightPanel, Pos.CENTER);
+
 
         workspace = new HBox(leftPanel, rightPanel);
         HBox.setHgrow(workspace, Priority.ALWAYS);
@@ -279,7 +285,6 @@ public final class AppUI extends UITemplate {
         newButton.setDisable(false);
 
         displayButton.setVisible(false);
-
     }
 
     private void setWorkspaceActions() {
@@ -318,8 +323,7 @@ public final class AppUI extends UITemplate {
     private void setDisplayButtonActions() {
         PropertyManager manager = applicationTemplate.manager;
         displayButton.setOnAction(event -> {
-           //chart.setLegendVisible(false);
-             chart.getData().clear();
+            chart.getData().clear();
             AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
             dataComponent.clear();
             if(loaded){
@@ -331,24 +335,7 @@ public final class AppUI extends UITemplate {
                 dataComponent.loadData(textArea.getText());
                 dataComponent.displayData();
             }
-           /* else
-            if(textArea.getText().equals("")) {
-                chart.getData().clear();
-                scrnshotButton.setDisable(true);
-            }
-            else if (hasNewText) {
-                try {
-                    if(checkText(textArea.getText()) && checkDuplicates()) {
-                        chart.getData().clear();
-                        AppData dataComponent = (AppData) applicationTemplate.getDataComponent();
-                        dataComponent.clear();
-                        dataComponent.loadData(textArea.getText());
-                        dataComponent.displayData();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }*/
+
             if(chart.getData().size() == 0)
                 scrnshotButton.setDisable(true);
             else
@@ -359,7 +346,6 @@ public final class AppUI extends UITemplate {
                 firstTime = true;
             } else {
                 if(firstTime) {
-                    System.out.println("kjberf");
                     algorithmRun();
                     firstTime = false;
                 }
@@ -369,8 +355,6 @@ public final class AppUI extends UITemplate {
                     }
                 }
             }
-
-
         });
     }
 
@@ -436,6 +420,7 @@ public final class AppUI extends UITemplate {
             textArea.setEditable(true);
             textArea.setStyle( "-fx-text-fill: black");
             algv.getChildren().clear();
+            displayButton.setVisible(false);
         });
 
         done.setOnAction(e -> {
@@ -465,9 +450,8 @@ public final class AppUI extends UITemplate {
         });
     }
 
-
     public void loaded()
-   {
+    {
        textArea.setEditable(false);
        textArea.setStyle( "-fx-text-fill: gray");
        ed.setVisible(false);
@@ -475,10 +459,10 @@ public final class AppUI extends UITemplate {
        algv.getChildren().clear();
        algv.getChildren().addAll(algoTitle,classification,clustering);
        radioSelection(false);
-   }
+    }
 
-   public void newAct()
-   {
+    public void newAct()
+    {
        if(loaded)
           ed.setVisible(true);
        textArea.setEditable(true);
@@ -490,23 +474,23 @@ public final class AppUI extends UITemplate {
        info.setText("");
        algv.getChildren().clear();
        radioSelection(false);
-   }
+    }
 
-   private void radioSelection(boolean bool){
-       rclass.setSelected(bool);
-       rclus.setSelected(bool);
-   }
+    private void radioSelection(boolean bool){
+        rclass.setSelected(bool);
+        rclus.setSelected(bool);
+    }
 
-   public void leftVisiblity(boolean bool)
-   {
+    public void leftVisiblity(boolean bool)
+    {
        leftPanelTitle.setVisible(bool);
        textArea.setVisible(bool);
        edit.setVisible(bool);
        done.setVisible(bool);
-   }
+    }
 
-   public void infoMsg(String str)
-   {
+    public void infoMsg(String str)
+    {
 
        if(loaded) {
            applicationTemplate.getDataComponent().clear();
@@ -518,7 +502,7 @@ public final class AppUI extends UITemplate {
        }
 
        info.setText(((AppData)applicationTemplate.getDataComponent()).forDone(str));
-   }
+    }
 
     private void setAlgTypeAction()
     {
@@ -654,7 +638,6 @@ public final class AppUI extends UITemplate {
                         clusterRun = false;
                     displayButton.setVisible(true);
                     configStage.close();
-                    firstTime = true;
                 }
                 else{
                     configError(manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR_TITLE.name()),manager.getPropertyValue(AppPropertyTypes.CONFIG_ERROR.name()));
@@ -703,6 +686,7 @@ public final class AppUI extends UITemplate {
         configStage.setScene(scene);
         pane.setAlignment(Pos.CENTER);
         configStage.setAlwaysOnTop(true);
+        firstTime = true;
         configStage.show();
     }
 
@@ -723,12 +707,22 @@ public final class AppUI extends UITemplate {
 
     public void disableScreenshot(boolean bool)
     {
-    scrnshotButton.setDisable(bool);
+        scrnshotButton.setDisable(bool);
     }
 
     public void disableDisplay(boolean bool)
     {
         displayButton.setDisable(bool);
+    }
+
+    public void disableNew(boolean bool)
+    {
+        newButton.setDisable(bool);
+    }
+
+    public void disableLoad(boolean bool)
+    {
+        loadButton.setDisable(bool);
     }
 
     private void alert()
@@ -741,4 +735,20 @@ public final class AppUI extends UITemplate {
         alert.initOwner(configStage);
         alert.showAndWait();
     }
+
+   public void setAlgRunning(boolean bool)
+   {
+       algRunning = bool;
+   }
+
+   public boolean getAlgRunning()
+   {
+       return algRunning;
+   }
+
+    public synchronized void updateIterationLabel(AtomicInteger iterations)
+    {
+        iteration.setText("Iterations = " + iterations);
+    }
+
 }

@@ -2,19 +2,15 @@ package classification;
 
 import algorithms.Classifier;
 import data.DataSet;
-import dataprocessors.AppData;
 import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 import ui.AppUI;
 import vilij.templates.ApplicationTemplate;
-
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Ritwik Banerjee
@@ -27,16 +23,13 @@ public class RandomClassifier extends Classifier {
     // this mock classifier doesn't actually use the data, but a real classifier will
     private ApplicationTemplate applicationTemplate;
     private DataSet dataset;
-    private List<List<Integer>> bigList= new ArrayList<>();
     private final int maxIterations;
     private final int updateInterval;
     private double xmax;
     private double xmin;
     private double ymin;
     private double ymax;
-    XYChart.Series<Number, Number> ser;
-    AppData appData;
-    // currently, this value does not change after instantiation
+    private XYChart.Series<Number, Number> ser;
     private final AtomicBoolean tocontinue;
 
     @Override
@@ -77,74 +70,73 @@ public class RandomClassifier extends Classifier {
     public synchronized void run() {
         ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(true);
         ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(true);
+        ((AppUI) applicationTemplate.getUIComponent()).setAlgRunning(true);
+        ((AppUI) applicationTemplate.getUIComponent()).disableLoad(true);
+        ((AppUI) applicationTemplate.getUIComponent()).disableNew(true);
         for (int i = 1; i <= maxIterations; i++) {
-            int xCoefficient = new Double(RAND.nextDouble() * 100).intValue() +1;
-            int yCoefficient = new Double(RAND.nextDouble() * 100).intValue() +1;
-            int constant     = new Double(RAND.nextDouble() * 100).intValue() +1;
+            int xCoefficient = new Long(-1 * Math.round((2 * RAND.nextDouble() - 1) * 10)).intValue();
+            int yCoefficient = 10;
+            int constant = RAND.nextInt(11);
 
             // this is the real output of the classifier
             output = Arrays.asList(xCoefficient, yCoefficient, constant);
-            bigList.add(output);
-            ymin =  -(constant + (xCoefficient * xmin)) / yCoefficient;
-            ymax =  -(constant + (xCoefficient * xmax)) / yCoefficient;
+            ymin = -(constant + (xCoefficient * xmin)) / yCoefficient;
+            ymax = -(constant + (xCoefficient * xmax)) / yCoefficient;
 
+            final AtomicInteger n = new AtomicInteger(i);
+            Platform.runLater(() ->  ((AppUI) applicationTemplate.getUIComponent()).updateIterationLabel(n));
             try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if ( (i == maxIterations) || ((i % updateInterval) == 0)) {
+                try {
                     Platform.runLater(() -> ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().remove(ser));
-                    Platform.runLater(()-> {
-                    ser = new XYChart.Series<>();
-                    ser.setName("Classification");
-                    ser.getData().add(new XYChart.Data<>(xmin, ymin));
-                    ser.getData().add(new XYChart.Data<>(xmax, ymax));
-                    ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().add(ser);
+                    Platform.runLater(() -> {
+                        ser = new XYChart.Series<>();
+                        ser.setName("Classification");
+                        ser.getData().add(new XYChart.Data<>(xmin, ymin));
+                        ser.getData().add(new XYChart.Data<>(xmax, ymax));
+                        ((AppUI) applicationTemplate.getUIComponent()).getChart().getData().add(ser);
                         for (int j = 0; j < ser.getData().size(); j++)
                             ser.getData().get(j).getNode().setStyle(" visibility: hidden");
-                });
-                Thread.sleep(600);
+                    });
+                    Thread.sleep(700);
 
-            } catch (InterruptedException e) {
-                System.err.println(e.getMessage());
-            }
-
-            // everything below is just for internal viewing of how the output is changing
-            // in the final project, such changes will be dynamically visible in the UI
-            if (i % updateInterval == 0) {
-                //System.out.printf("Iteration number %d: ", i); //
-                flush();
-            }
-            if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
-                //System.out.printf("Iteration number %d: ", i);
-                flush();
-                break;
-            }
-            if(!tocontinue()) {
-                try {
-                    ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(false);
-                    ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(false);
-                    wait();
                 } catch (InterruptedException e) {
                     System.err.println(e.getMessage());
                 }
-                ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(true);
-                ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(true);
+
+                if (!tocontinue()) {
+                    try {
+                        ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(false);
+                        ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(false);
+                        ((AppUI) applicationTemplate.getUIComponent()).setAlgRunning(false);
+                        ((AppUI) applicationTemplate.getUIComponent()).disableLoad(false);
+                        ((AppUI) applicationTemplate.getUIComponent()).disableNew(false);
+                        if(i != maxIterations)
+                           wait();
+                    } catch (InterruptedException e) {
+                        System.err.println(e.getMessage());
+                    }
+                    ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(true);
+                    ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(true);
+                    ((AppUI) applicationTemplate.getUIComponent()).setAlgRunning(true);
+                    ((AppUI) applicationTemplate.getUIComponent()).disableLoad(true);
+                    ((AppUI) applicationTemplate.getUIComponent()).disableNew(true);
+                }
             }
         }
-        if(tocontinue()) {
-            ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(false);
-            ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(false);
-        }
+                ((AppUI) applicationTemplate.getUIComponent()).disableScreenshot(false);
+                ((AppUI) applicationTemplate.getUIComponent()).setAlgRunning(false);
+                ((AppUI) applicationTemplate.getUIComponent()).disableLoad(false);
+                ((AppUI) applicationTemplate.getUIComponent()).disableNew(false);
 
+                if (tocontinue())
+                   ((AppUI) applicationTemplate.getUIComponent()).disableDisplay(false);
     }
-
-    public List<List<Integer>> getBigList()
-    {
-        return bigList;
-    }
-
-    // for internal viewing only
-    protected void flush() {
-        System.out.printf("%d\t%d\t%d%n", output.get(0), output.get(1), output.get(2));
-    }
-
 
     /** A placeholder main method to just make sure this code runs smoothly */
     public static void main(String... args) throws IOException {

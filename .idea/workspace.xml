@@ -3,6 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="39e74a60-7b99-4e61-bfa0-7aed4f499a40" name="Default" comment="2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/resources/data/9ins2labels.tsd" beforeDir="false" afterPath="$PROJECT_DIR$/hw1/data-vilij/resources/data/9ins2labels.tsd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/resources/gui/icons/pause.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml" beforeDir="false" afterPath="$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java" beforeDir="false" afterPath="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,11 +28,8 @@
       <file leaf-file-name="AppActions.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/actions/AppActions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="77" column="13" lean-forward="true" selection-start-line="77" selection-start-column="13" selection-end-line="77" selection-end-column="13" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="-5">
+              <caret line="27" column="39" lean-forward="true" selection-start-line="27" selection-start-column="39" selection-end-line="27" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -34,46 +37,49 @@
       <file leaf-file-name="RandomClassifier.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/classification/RandomClassifier.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-6">
-              <caret line="112" column="13" lean-forward="true" selection-start-line="112" selection-start-column="13" selection-end-line="112" selection-end-column="13" />
+            <state relative-caret-position="1800">
+              <caret line="130" column="9" lean-forward="true" selection-start-line="130" selection-start-column="9" selection-end-line="130" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4820#4821#0" expanded="true" />
-                <element signature="e#4850#4851#0" expanded="true" />
-                <element signature="e#4913#4914#0" expanded="true" />
-                <element signature="e#5007#5008#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Classifier.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/algorithms/Classifier.java">
+      <file leaf-file-name="cse219.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hw1/data-vilij/resources/cse219.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="19" selection-start-column="19" selection-end-column="19" />
+            <state relative-caret-position="-202">
+              <caret line="2" column="23" selection-start-line="2" selection-start-column="23" selection-end-line="2" selection-end-column="23" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TSDProcessor.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TSDProcessor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1800">
-              <caret line="120" lean-forward="true" selection-start-line="120" selection-end-line="120" />
+            <state relative-caret-position="977">
+              <caret line="81" column="38" selection-start-line="81" selection-start-column="38" selection-end-line="81" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#6904#6905#0" expanded="true" />
+                <element signature="e#6938#6939#0" expanded="true" />
+                <element signature="e#6969#6970#0" expanded="true" />
+                <element signature="e#6996#6997#0" expanded="true" />
+                <element signature="e#7027#7028#0" expanded="true" />
+                <element signature="e#7054#7055#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AppData.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="AppData.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="471">
-              <caret line="66" column="20" selection-start-line="66" selection-start-column="20" selection-end-line="66" selection-end-column="20" />
+            <state relative-caret-position="-412">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#2139#2140#0" expanded="true" />
                 <element signature="e#2172#2173#0" expanded="true" />
                 <element signature="e#2205#2206#0" expanded="true" />
@@ -83,45 +89,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataSet.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/data/DataSet.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="834">
-              <caret line="72" column="74" selection-start-line="72" selection-start-column="74" selection-end-line="72" selection-end-column="74" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="AppUI.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="694" column="20" lean-forward="true" selection-start-line="694" selection-start-column="20" selection-end-line="694" selection-end-column="20" />
+            <state relative-caret-position="177">
+              <caret line="463" column="16" selection-start-line="463" selection-start-column="16" selection-end-line="463" selection-end-column="16" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1384#1420#0" expanded="true" />
+                <element signature="e#1340#1376#0" expanded="true" />
+                <element signature="e#16620#16621#0" expanded="true" />
+                <element signature="e#16647#16648#0" expanded="true" />
+                <element signature="e#16692#16693#0" expanded="true" />
+                <element signature="e#16720#16721#0" expanded="true" />
+                <element signature="e#26817#26818#0" expanded="true" />
+                <element signature="e#26864#26865#0" expanded="true" />
+                <element signature="e#27450#27451#0" expanded="true" />
+                <element signature="e#27496#27497#0" expanded="true" />
+                <element signature="e#27014#27015#0" expanded="true" />
+                <element signature="e#27060#27061#0" expanded="true" />
+                <element signature="e#27100#27101#0" expanded="true" />
+                <element signature="e#27146#27147#0" expanded="true" />
+                <element signature="e#28095#28096#0" expanded="true" />
+                <element signature="e#28126#28127#0" expanded="true" />
+                <element signature="e#28169#28170#0" expanded="true" />
+                <element signature="e#28200#28201#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AppPropertyTypes.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="60" column="13" selection-start-line="60" selection-start-column="13" selection-end-line="60" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app-properties.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="66" column="46" selection-start-line="66" selection-start-column="46" selection-end-line="66" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -144,7 +136,6 @@
       <find>list</find>
       <find>pane</find>
       <find>stream</find>
-      <find>isUnsaved</find>
       <find>ICONS_RESOURCE_PATH</find>
       <find>setToolbarButton</find>
       <find>setSet</find>
@@ -155,6 +146,17 @@
       <find>check</find>
       <find>checkDuplicates</find>
       <find>checkDupli</find>
+      <find>setAni</find>
+      <find>displayButton.setOn</find>
+      <find>firstTime</find>
+      <find>tool</find>
+      <find>isUnsaved</find>
+      <find>infoMsg</find>
+      <find>rightPanel</find>
+      <find>chart</find>
+      <find>displayButton.setO</find>
+      <find>iteration</find>
+      <find>layout</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/hw1/data-vilij/resources/gui/icons</dir>
@@ -180,14 +182,14 @@
         <option value="$PROJECT_DIR$/hw1/vilij/src/vilij/templates/UITemplate.java" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/src/data/DataSet.java" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/resources/data/sample-data.tsd" />
-        <option value="$PROJECT_DIR$/hw1/data-vilij/resources/cse219.css" />
-        <option value="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java" />
-        <option value="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml" />
+        <option value="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java" />
+        <option value="$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java" />
-        <option value="$PROJECT_DIR$/hw1/data-vilij/src/classification/RandomClassifier.java" />
-        <option value="$PROJECT_DIR$/hw1/data-vilij/src/actions/AppActions.java" />
+        <option value="$PROJECT_DIR$/hw1/data-vilij/resources/cse219.css" />
         <option value="$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java" />
+        <option value="$PROJECT_DIR$/hw1/data-vilij/src/actions/AppActions.java" />
+        <option value="$PROJECT_DIR$/hw1/data-vilij/src/classification/RandomClassifier.java" />
       </list>
     </option>
   </component>
@@ -327,24 +329,6 @@
               <item name="cse219homework" type="b2602c69:ProjectViewProjectNode" />
               <item name="data-vilij" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="cse219homework" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data-vilij" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="cse219homework" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data-vilij" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="icons" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="cse219homework" type="b2602c69:ProjectViewProjectNode" />
-              <item name="data-vilij" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="properties" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="cse219homework" type="b2602c69:ProjectViewProjectNode" />
@@ -578,7 +562,7 @@
       <workItem from="1524109660889" duration="25046000" />
       <workItem from="1524190157281" duration="465000" />
       <workItem from="1524498775153" duration="25079000" />
-      <workItem from="1524618905012" duration="17043000" />
+      <workItem from="1524618905012" duration="55475000" />
     </task>
     <task id="LOCAL-00001" summary="hw1">
       <created>1517889461759</created>
@@ -591,7 +575,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="305221000" />
+    <option name="totallyTimeSpent" value="343653000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -614,7 +598,7 @@
       <window_info anchor="right" id="Palette&#9;" order="8" />
       <window_info id="Image Layers" order="6" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4888889" visible="true" weight="0.32876712" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4888889" visible="true" weight="0.2739726" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.16705883" />
       <window_info anchor="bottom" id="Sequence" order="11" weight="1.0" />
       <window_info anchor="bottom" id="Terminal" order="12" />
@@ -660,13 +644,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="32">
           <caret line="862" selection-start-line="862" selection-end-line="862" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/javafx-src.zip!/javafx/event/EventHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="44" column="9" selection-start-line="44" selection-start-column="9" selection-end-line="44" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -847,16 +824,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/DataVisualizer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="22" selection-start-line="22" selection-end-line="22" />
-          <folding>
-            <element signature="imports" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/algorithms/DataSet.java" />
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/src.zip!/java/io/File.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -898,6 +865,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-541">
           <caret line="3798" column="30" selection-start-line="3798" selection-start-column="30" selection-end-line="3798" selection-end-column="30" />
+          <folding>
+            <element signature="e#177013#177014#0" expanded="true" />
+            <element signature="e#177054#177055#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -950,13 +921,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/resources/cse219.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="24" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/javafx-src.zip!/com/sun/javafx/application/PlatformImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="174">
@@ -968,6 +932,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
           <caret line="82" column="24" selection-start-line="82" selection-start-column="24" selection-end-line="82" selection-end-column="24" />
+          <folding>
+            <element signature="e#2657#2658#0" expanded="true" />
+            <element signature="e#2704#2705#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1003,74 +971,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="66" column="46" selection-start-line="66" selection-start-column="46" selection-end-line="66" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="60" column="13" selection-start-line="60" selection-start-column="13" selection-end-line="60" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="471">
-          <caret line="66" column="20" selection-start-line="66" selection-start-column="20" selection-end-line="66" selection-end-column="20" />
-          <folding>
-            <element signature="e#2139#2140#0" expanded="true" />
-            <element signature="e#2172#2173#0" expanded="true" />
-            <element signature="e#2205#2206#0" expanded="true" />
-            <element signature="e#2301#2302#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/data/DataSet.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="834">
           <caret line="72" column="74" selection-start-line="72" selection-start-column="74" selection-end-line="72" selection-end-column="74" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/actions/AppActions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="77" column="13" lean-forward="true" selection-start-line="77" selection-start-column="13" selection-end-line="77" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/classification/RandomClassifier.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6">
-          <caret line="112" column="13" lean-forward="true" selection-start-line="112" selection-start-column="13" selection-end-line="112" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4820#4821#0" expanded="true" />
-            <element signature="e#4850#4851#0" expanded="true" />
-            <element signature="e#4913#4914#0" expanded="true" />
-            <element signature="e#5007#5008#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="694" column="20" lean-forward="true" selection-start-line="694" selection-start-column="20" selection-end-line="694" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1384#1420#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1082,12 +988,111 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java">
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/javafx-src.zip!/javafx/event/EventHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1800">
-          <caret line="120" lean-forward="true" selection-start-line="120" selection-end-line="120" />
+        <state relative-caret-position="315">
+          <caret line="44" column="9" selection-start-line="44" selection-start-column="9" selection-end-line="44" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/DataVisualizer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/settings/AppPropertyTypes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="885">
+          <caret line="59" column="17" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/resources/properties/app-properties.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="61">
+          <caret line="29" column="45" selection-start-line="29" selection-start-column="45" selection-end-line="29" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/resources/cse219.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-202">
+          <caret line="2" column="23" selection-start-line="2" selection-start-column="23" selection-end-line="2" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/ui/AppUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="463" column="16" selection-start-line="463" selection-start-column="16" selection-end-line="463" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1340#1376#0" expanded="true" />
+            <element signature="e#16620#16621#0" expanded="true" />
+            <element signature="e#16647#16648#0" expanded="true" />
+            <element signature="e#16692#16693#0" expanded="true" />
+            <element signature="e#16720#16721#0" expanded="true" />
+            <element signature="e#26817#26818#0" expanded="true" />
+            <element signature="e#26864#26865#0" expanded="true" />
+            <element signature="e#27450#27451#0" expanded="true" />
+            <element signature="e#27496#27497#0" expanded="true" />
+            <element signature="e#27014#27015#0" expanded="true" />
+            <element signature="e#27060#27061#0" expanded="true" />
+            <element signature="e#27100#27101#0" expanded="true" />
+            <element signature="e#27146#27147#0" expanded="true" />
+            <element signature="e#28095#28096#0" expanded="true" />
+            <element signature="e#28126#28127#0" expanded="true" />
+            <element signature="e#28169#28170#0" expanded="true" />
+            <element signature="e#28200#28201#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/actions/AppActions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5">
+          <caret line="27" column="39" lean-forward="true" selection-start-line="27" selection-start-column="39" selection-end-line="27" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/classification/RandomClassifier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1800">
+          <caret line="130" column="9" lean-forward="true" selection-start-line="130" selection-start-column="9" selection-end-line="130" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/TSDProcessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="977">
+          <caret line="81" column="38" selection-start-line="81" selection-start-column="38" selection-end-line="81" selection-end-column="38" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#6904#6905#0" expanded="true" />
+            <element signature="e#6938#6939#0" expanded="true" />
+            <element signature="e#6969#6970#0" expanded="true" />
+            <element signature="e#6996#6997#0" expanded="true" />
+            <element signature="e#7027#7028#0" expanded="true" />
+            <element signature="e#7054#7055#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hw1/data-vilij/src/dataprocessors/AppData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-412">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2139#2140#0" expanded="true" />
+            <element signature="e#2172#2173#0" expanded="true" />
+            <element signature="e#2205#2206#0" expanded="true" />
+            <element signature="e#2301#2302#0" expanded="true" />
           </folding>
         </state>
       </provider>

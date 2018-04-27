@@ -1,7 +1,6 @@
 .chart-plot-background {
     -fx-border-color: Black;
-    -fx-border-style: solid;
-    -fx-border-width: 4px;
+    -fx-border-width: 2px;
     -fx-border-insets: 0 0 0 1;
 }
 
@@ -22,22 +21,23 @@
 }
 
 .axis Text{
-    -fx-fill: red;
+    -fx-fill: black;
+    -fx-font-size: 12;
 }
 
 .axis {
-    -fx-tick-length: 20;
-    -fx-minor-tick-length: 10;
+    -fx-tick-length: 15;
+    -fx-minor-tick-length: 7;
 }
 
 .axis-tick-mark {
-    -fx-stroke: #637040;
-    -fx-stroke-width: 3;
+    -fx-stroke: black;
+    -fx-stroke-width: 1.5;
 }
 
 .axis-minor-tick-mark {
-    -fx-stroke: #859656;
-    -fx-stroke-width: 2;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
 }
 
 .scroll-pane {

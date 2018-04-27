@@ -39,8 +39,6 @@ public final class TSDProcessor {
     private int numOfLabels;
     private double xMax;
     private double xMin;
-    private double yMax;
-    private double yMin;
     LinkedList<Double> xList = new LinkedList();
 
     public TSDProcessor() {
@@ -58,7 +56,7 @@ public final class TSDProcessor {
     public void processString(String tsdString) throws Exception {
         AtomicBoolean hadAnError = new AtomicBoolean(false);
         StringBuilder errorMessage = new StringBuilder();
-
+        xList.clear();
         Stream.of(tsdString.split("\n"))
                 .map(line -> Arrays.asList(line.split("\t")))
                 .forEach(list -> {
@@ -82,8 +80,6 @@ public final class TSDProcessor {
 
         xMin = Collections.min(xList);
         xMax = Collections.max(xList);
-
-
     }
 
     /**
@@ -92,50 +88,29 @@ public final class TSDProcessor {
      * @param chart the specified chart
      */
     void toChartData(XYChart<Number, Number> chart) {
-        Double yval = 0.0;
-        int counter = 0;
         Set<String> labels = new HashSet<>(dataLabels.values());
-        Set<String> keys = new HashSet<>(dataLabels.keySet());
-        String[] keyarray = keys.toArray(new String[dataLabels.size()]);
+        Map<XYChart.Data<Number, Number>, String> toolTipMap = new HashMap<>();
         for (String label : labels) {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             series.setName(label);
             dataLabels.entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
                 Point2D point = dataPoints.get(entry.getKey());
-                series.getData().add(new XYChart.Data<>(point.getX(), point.getY()));
+                XYChart.Data<Number, Number> pt = new XYChart.Data<>(point.getX(), point.getY());
+                series.getData().add(pt);
+                toolTipMap.put(pt, entry.getKey());
             });
             chart.getData().add(series);
             series.getNode().setVisible(false);
-            for (int i = 0; i < series.getData().size(); i++) {
-                Tooltip.install(series.getData().get(i).getNode(), new Tooltip(keyarray[i].substring(1)));
-                series.getData().get(i).getNode().setOnMouseEntered((MouseEvent event) -> {
+            for (XYChart.Data<Number, Number> temp : series.getData()) {
+                Tooltip.install(temp.getNode(), new Tooltip(toolTipMap.get(temp).substring(1)));
+                temp.getNode().setOnMouseEntered((MouseEvent event) -> {
                     ((Node) (event.getSource())).setCursor(Cursor.HAND);
                 });
-                series.getData().get(i).getNode().setOnMouseExited((MouseEvent event) -> {
+                temp.getNode().setOnMouseExited((MouseEvent event) -> {
                     ((Node) (event.getSource())).setCursor(Cursor.DEFAULT);
                 });
-                yval += (Double) series.getData().get(i).getYValue();
-                counter++;
             }
         }
-
-       /* final Double yavg = yval / counter;
-        XYChart.Series<Number, Number> avgser = new XYChart.Series<>();
-        avgser.setName("Average Y");
-        for (String label : labels) {
-            dataLabels.entrySet().stream().filter(entry -> entry.getValue().equals(label)).forEach(entry -> {
-                Point2D point = dataPoints.get(entry.getKey());
-                avgser.getData().add(new XYChart.Data<>(point.getX(), yavg));
-            });
-        }
-        if (dataPoints.size() == 1) {
-            avgser.getData().add(new XYChart.Data<>(0, yavg));
-        }
-        chart.getData().add(avgser);
-        for (int i = 0; i < avgser.getData().size(); i++)
-            avgser.getData().get(i).getNode().setStyle(" visibility: hidden");
-        avgser.getNode().setVisible(true);
-        */
     }
 
     void clear() {

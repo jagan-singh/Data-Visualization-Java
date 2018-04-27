@@ -1,6 +1,9 @@
 package actions;
 
 import java.io.File;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import settings.AppPropertyTypes;
 import ui.AppUI;
 import vilij.components.ActionComponent;
@@ -19,6 +22,7 @@ import static vilij.settings.PropertyTypes.SAVE_WORK_TITLE;
 import java.net.URL;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
 import javafx.scene.image.WritableImage;
 import javafx.scene.SnapshotParameters;
@@ -62,10 +66,11 @@ public final class AppActions implements ActionComponent  {
                 isUnsaved.set(false);
                 dataFilePath = null;
                 numsave = 0;
+                ui.newAct();
+                ui.setLoaded(false);
             }
         } catch (IOException e) { errorHandlingHelper(); }
-        ui.newAct();
-        ui.setLoaded(false);
+
     }
 
     @Override
@@ -142,8 +147,11 @@ public final class AppActions implements ActionComponent  {
 
     @Override
     public void handleExitRequest() {
+        AppUI ui = (AppUI)applicationTemplate.getUIComponent();
         try {
-            if (!isUnsaved.get() || promptToSave())
+            if(ui.getAlgRunning())
+                exitDialog();
+            else if (!isUnsaved.get() || promptToSave())
                 System.exit(0);
         } catch (IOException e) { errorHandlingHelper(); }
     }
@@ -252,5 +260,26 @@ public final class AppActions implements ActionComponent  {
        fileChooser.getExtensionFilters().addAll(extFilter);
        return fileChooser;
    }
+
+   private void exitDialog() {
+       PropertyManager manager = applicationTemplate.manager;
+       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+       alert.setTitle(manager.getPropertyValue(AppPropertyTypes.ALERT.name()));
+       alert.setHeaderText(manager.getPropertyValue(AppPropertyTypes.ALGORITHM_RUNNING_TITLE.name()));
+       alert.setContentText(manager.getPropertyValue(AppPropertyTypes.EXIT_WHILE_RUNNING_WARNING.name()));
+
+       ButtonType yesBtn = new ButtonType("Yes");
+       ButtonType noBtn = new ButtonType("No");
+
+       alert.getButtonTypes().setAll(yesBtn, noBtn);
+
+       Optional<ButtonType> result = alert.showAndWait();
+       if (result.get() == yesBtn)
+          System.exit(1);
+       else
+          alert.close();
+
+   }
+
 }
 
