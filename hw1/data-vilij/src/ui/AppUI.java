@@ -78,14 +78,12 @@ public final class AppUI extends UITemplate {
     private int clusterInterval = 5;
     private boolean clusterRun = false;
     private int labels = 0;
-    private boolean play = true;
     private Stage configStage;
     private DataSet set;
     private RandomClassifier classifier;
     private boolean firstTime = true;
     private boolean algRunning = false;
     private Label iteration;
-    public AtomicInteger iterations;
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
         super(primaryStage, applicationTemplate);
