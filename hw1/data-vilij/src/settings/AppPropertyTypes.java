@@ -11,6 +11,7 @@ public enum AppPropertyTypes {
 
     /* resource files and folders */
     DATA_RESOURCE_PATH,
+    ALGORITHM_PATH,
 
     /* user interface icon file names */
     SCREENSHOT_ICON,
@@ -52,6 +53,7 @@ public enum AppPropertyTypes {
     CLASSIFICATION,
     RANDOM_CLASSIFICATION,
     RANDOM_CLUSTERING,
+    KMEANS_CLUSTERING,
     MAX_ITERATIONS,
     UPDATE_INTERVAL,
     LABELS,

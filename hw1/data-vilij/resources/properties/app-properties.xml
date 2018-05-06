@@ -6,6 +6,7 @@ functionality within the main workspace. -->
     <property_list>
         <!-- RESOURCE FILES AND FOLDERS -->
         <property name="DATA_RESOURCE_PATH" value="data"/>
+        <property name="ALGORITHM_PATH" value="algFiles"/>
 
         <!-- USER INTERFACE ICON FILES -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>
@@ -62,6 +63,7 @@ functionality within the main workspace. -->
         <property name="CLASSIFICATION" value="Classification"/>
         <property name="RANDOM_CLUSTERING" value="Random Clustering"/>
         <property name="RANDOM_CLASSIFICATION" value="Random Classification"/>
+        <property name="KMEANS_CLUSTERING" value="KMeans Clustering"/>
         <property name="MAX_ITERATIONS" value="Max. Iterations:"/>
         <property name="UPDATE_INTERVAL" value="Update Interval:"/>
         <property name="LABELS" value="Labels:"/>

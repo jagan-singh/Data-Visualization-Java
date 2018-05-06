@@ -1,6 +1,5 @@
 package dataprocessors;
 
-import data.DataSet;
 import javafx.geometry.Point2D;
 import javafx.scene.chart.XYChart;
 import java.util.*;
@@ -10,8 +9,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import ui.AppUI;
-import vilij.templates.ApplicationTemplate;
 
 /**
  * The data files used by this data visualization applications follow a tab-separated format, where each data point is
@@ -149,4 +146,15 @@ public final class TSDProcessor {
     public double getxMin() {
         return xMin;
     }
+
+    public Map<String, String> getDataLabels() {
+        return dataLabels;
+    }
+
+    public Map<String, Point2D> getDataPoints() {
+        return dataPoints;
+    }
+
+
+
 }

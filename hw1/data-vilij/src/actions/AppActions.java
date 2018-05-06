@@ -41,6 +41,7 @@ public final class AppActions implements ActionComponent  {
     private ApplicationTemplate applicationTemplate;
 
     /** Path to the data file currently active. */
+    private static final String SEPARATOR = "/";
     Path dataFilePath;
     SimpleBooleanProperty isUnsaved;
     private int numsave = 0;
@@ -165,7 +166,7 @@ public final class AppActions implements ActionComponent  {
         WritableImage image = ((AppUI)applicationTemplate.getUIComponent()).getChart().snapshot(new SnapshotParameters(), null);
         PropertyManager manager = applicationTemplate.manager;
         FileChooser fileChooser = new FileChooser();
-        String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+        String      dataDirPath = SEPARATOR + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
         URL         dataDirURL  = getClass().getResource(dataDirPath);
         fileChooser.setInitialDirectory(new File(dataDirURL.getFile()));
         FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
@@ -206,7 +207,7 @@ public final class AppActions implements ActionComponent  {
         if (dialog.getSelectedOption().equals(ConfirmationDialog.Option.YES)) {
             if (dataFilePath == null) {
                 FileChooser fileChooser = new FileChooser();
-                String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+                String      dataDirPath = SEPARATOR + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
                 URL         dataDirURL  = getClass().getResource(dataDirPath);
 
                 if (dataDirURL == null)
@@ -250,7 +251,7 @@ public final class AppActions implements ActionComponent  {
    {
        PropertyManager manager = applicationTemplate.manager;
        FileChooser fileChooser = new FileChooser();
-       String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+       String      dataDirPath = SEPARATOR + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
        URL         dataDirURL  = getClass().getResource(dataDirPath);
        fileChooser.setInitialDirectory(new File(dataDirURL.getFile()));
        String description = manager.getPropertyValue(AppPropertyTypes.DATA_FILE_EXT_DESC.name());
