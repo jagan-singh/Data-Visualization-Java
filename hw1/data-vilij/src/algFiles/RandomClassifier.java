@@ -2,15 +2,10 @@ package algFiles;
 
 import algorithms.Classifier;
 import data.DataSet;
-import javafx.application.Platform;
-import javafx.scene.chart.XYChart;
-import ui.AppUI;
-import vilij.templates.ApplicationTemplate;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Ritwik Banerjee

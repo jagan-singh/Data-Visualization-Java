@@ -26,7 +26,6 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
@@ -76,16 +75,9 @@ public final class AppUI extends UITemplate {
     private Label info;
     private Button clustering;
     private Button classification;
-    private Button classConfig;
-    private Button clusConfig;
-    private Button kclusConfig;
-    private RadioButton rclass;
-    private RadioButton rclus;
-    private RadioButton kclus;
+    private RadioButton[] buttons;
     private Label algoTitle;
-    private HBox rclassBox;
-    private HBox rclusBox;
-    private HBox kclusBox;
+    private Button config;
     private boolean cluster;
     private int classiIterations = 100;
     private int classiInterval = 5;
@@ -103,6 +95,7 @@ public final class AppUI extends UITemplate {
     private Clusterer clusterer;
     private Thread helperThread;
     private XYChart.Series<Number,Number> ser = new XYChart.Series<>();
+    private List<Class> classes;
 
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
@@ -205,6 +198,9 @@ public final class AppUI extends UITemplate {
         PropertyManager manager = applicationTemplate.manager;
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis();
+        xAxis.forceZeroInRangeProperty().set(false);
+        yAxis.forceZeroInRangeProperty().set(false);
+
         chart = new LineChart<>(xAxis, yAxis);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
         chart.setAnimated(false);
@@ -254,34 +250,13 @@ public final class AppUI extends UITemplate {
         classification = new Button(applicationTemplate.manager.getPropertyValue(CLASSIFICATION.name()));
         algoTitle = new Label(applicationTemplate.manager.getPropertyValue(ALGO_VBOX_TITLE.name()));
         algv.getChildren().addAll(algoTitle, clustering, classification);
+        algv.setAlignment(Pos.CENTER);
 
-        //Buttons for algorithms
-        rclassBox = new HBox();
-        rclusBox = new HBox();
-        kclusBox = new HBox();
         String configPath = String.join(SEPARATOR, iconsPath, manager.getPropertyValue(CONFIG_ICON.name()));
-        classConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(configPath))));
-        clusConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(configPath))));
-        kclusConfig = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(configPath))));
-
-        rclass = new RadioButton(applicationTemplate.manager.getPropertyValue(RANDOM_CLASSIFICATION.name()));
-        rclus = new RadioButton(applicationTemplate.manager.getPropertyValue(RANDOM_CLUSTERING.name()));
-        kclus = new RadioButton(applicationTemplate.manager.getPropertyValue(KMEANS_CLUSTERING.name()));
-
-        Tooltip.install(clusConfig, new Tooltip(applicationTemplate.manager.getPropertyValue(AppPropertyTypes.CONFIG_TOOLTIP.name())));
-        Tooltip.install(classConfig, new Tooltip(applicationTemplate.manager.getPropertyValue(AppPropertyTypes.CONFIG_TOOLTIP.name())));
-        Tooltip.install(kclusConfig, new Tooltip(applicationTemplate.manager.getPropertyValue(AppPropertyTypes.CONFIG_TOOLTIP.name())));
-        classConfig.setDisable(true);
-        clusConfig.setDisable(true);
-        kclusConfig.setDisable(true);
-
-        rclusBox.getChildren().addAll(rclus, clusConfig);
-        rclassBox.getChildren().addAll(rclass, classConfig);
-        kclusBox.getChildren().addAll(kclus,kclusConfig);
-
-        rclusBox.setSpacing(10);
-        rclassBox.setSpacing(10);
-        rclusBox.setSpacing(10);
+        config = new Button(null, new ImageView(new Image(getClass().getResourceAsStream(configPath))));
+        config.setAlignment(Pos.CENTER);
+        config.setDisable(true);
+        Tooltip.install(config, new Tooltip(applicationTemplate.manager.getPropertyValue(AppPropertyTypes.CONFIG_TOOLTIP.name())));
 
         HBox.setHgrow(processButtonsBox, Priority.ALWAYS);
         processButtonsBox.setSpacing(20);
@@ -317,7 +292,7 @@ public final class AppUI extends UITemplate {
 
         String fullPath = dataDirURL.getFile();
         File folder = new File(fullPath);
-        List<Class> classes = new ArrayList<Class>();
+        classes = new ArrayList<Class>();
         String[] files = folder.list();
         for (int i = 0; i < files.length; i++) {
             if (files[i].endsWith(".class")) {
@@ -330,22 +305,11 @@ public final class AppUI extends UITemplate {
             }
         }
 
+        buttons = new RadioButton[classes.size()];
         System.out.println(classes.size());
-        for(int i =0 ;i< classes.size();i++)
-            System.out.println(classes.get(i).getName());
-
-        try {
-            Class    klass       = Class.forName("algFiles.RandomClassifier");
-            Constructor konstructor = klass.getConstructors()[0];
-            //Object obj = konstructor.newInstance()
-            Method[] methods = klass.getDeclaredMethods();
-            for(int i=0;i<methods.length;i++)
-                System.out.println(methods[i].getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        for(int i =0 ;i< classes.size();i++) {
+            buttons[i] = new RadioButton(classes.get(i).getName().substring(classes.get(i).getName().indexOf('.')+1));
         }
-
-
     }
 
     private void setWorkspaceActions() {
@@ -416,7 +380,6 @@ public final class AppUI extends UITemplate {
                         helperThread.notify();
                     }
                 }
-
             }
 
             if (chart.getData().size() == 0)
@@ -516,6 +479,7 @@ public final class AppUI extends UITemplate {
                 } catch (IOException e1) {
                     System.err.println(e1.getMessage());
                 }
+                radioSelection(false);
             }
         });
     }
@@ -547,8 +511,9 @@ public final class AppUI extends UITemplate {
     }
 
     private void radioSelection(boolean bool){
-        rclass.setSelected(bool);
-        rclus.setSelected(bool);
+       for(int i =0; i<buttons.length;i++){
+           buttons[i].setSelected(bool);
+       }
     }
 
     public void leftVisiblity(boolean bool)
@@ -578,56 +543,46 @@ public final class AppUI extends UITemplate {
     {
         clustering.setOnAction( e -> {
             algv.getChildren().clear();
-            algv.getChildren().addAll(new Label(applicationTemplate.manager.getPropertyValue(CLUSTERING.name())),rclusBox,kclusBox);
+            algv.getChildren().add(new Label(applicationTemplate.manager.getPropertyValue(CLUSTERING.name())));
+            for(int i =0 ;i< buttons.length;i++)
+            {
+                if(buttons[i].getText().endsWith(applicationTemplate.manager.getPropertyValue(CLUSTERER.name())))
+                    algv.getChildren().add(buttons[i]);
+            }
+            algv.getChildren().add(config);
             cluster = true;
         });
 
         classification.setOnAction( e -> {
             algv.getChildren().clear();
-            algv.getChildren().addAll(new Label(applicationTemplate.manager.getPropertyValue(CLASSIFICATION.name())),rclassBox);
+            algv.getChildren().add(new Label(applicationTemplate.manager.getPropertyValue(CLASSIFICATION.name())));
+            for(int i =0 ;i< buttons.length;i++)
+            {
+                if(buttons[i].getText().endsWith(applicationTemplate.manager.getPropertyValue(CLASSIFIER.name())))
+                    algv.getChildren().add(buttons[i]);
+            }
+            algv.getChildren().add(config);
             cluster = false;
         });
     }
 
     private void algActions()
     {
-        rclass.setOnAction( e -> {
-            rclass.setSelected(true);
-            rclus.setSelected(false);
-            kclus.setSelected(false);
-            classConfig.setDisable(false);
-        });
-
-        rclus.setOnAction( e -> {
-            rclus.setSelected(true);
-            rclass.setSelected(false);
-            kclus.setSelected(false);
-            kclusConfig.setDisable(true);
-            clusConfig.setDisable(false);
-        });
-
-        kclus.setOnAction( e ->{
-            kclus.setSelected(true);
-            rclus.setSelected(false);
-            rclass.setSelected(false);
-            clusConfig.setDisable(true);
-            kclusConfig.setDisable(false);
-        });
+        for(int i = 0;i < buttons.length;i++) {
+            int finalI = i;
+            buttons[i].setOnAction(e -> {
+                config.setDisable(false);
+                for(int j = 0;j < buttons.length;j++){
+                    if(finalI != j)
+                        buttons[j].setSelected(false);
+                }
+            });
+        }
     }
 
     private void configAction()
     {
-        classConfig.setOnAction( e -> {
-            configDialog();
-        });
-
-        clusConfig.setOnAction( e -> {
-            configDialog();
-        });
-
-        kclusConfig.setOnAction(e -> {
-            configDialog();
-        });
+       config.setOnAction( e ->  configDialog() );
     }
 
     private void configError(String title,String msg)
@@ -784,7 +739,20 @@ public final class AppUI extends UITemplate {
     }
 
     public void algorithmRun(){
+        Class<?> classif = classes.get(0);
+        Constructor konstructor = classif.getDeclaredConstructors()[0];
+
         if(!cluster) {
+            Object mc1 = null;
+            try {
+                mc1 = (Classifier) konstructor.newInstance(set,classiIterations,classiInterval,classiRun);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
             classifier = new RandomClassifier(set, classiIterations, classiInterval, classiRun);
             Thread thread = new Thread(classifier);
             thread.start();
@@ -846,9 +814,21 @@ public final class AppUI extends UITemplate {
 
         }else
         {
-            if(rclus.isSelected())
+            Class<?> cluster = classes.get(1);
+            Constructor clustructor = cluster.getDeclaredConstructors()[0];
+            Object mc1 = null;
+            try {
+                mc1 = clustructor.newInstance(set,clusterIterations,clusterInterval,clusterRun,labels);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            if(selectedButton().equals("RandomClusterer"))
                 clusterer = new RandomClusterer(set, clusterIterations, clusterInterval, clusterRun,labels);
-            else if(kclus.isSelected())
+            else if(selectedButton().equals("KMeansClusterer"))
               clusterer = new KMeansClusterer(set,clusterIterations,clusterInterval,clusterRun,labels);
             Thread thread = new Thread(clusterer);
             thread.start();
@@ -979,5 +959,16 @@ public final class AppUI extends UITemplate {
     public boolean getAlgRunning()
     {
         return algRunning;
+    }
+
+    private String selectedButton()
+    {
+        for(int i = 0; i < buttons.length;i++ )
+        {
+            if(buttons[i].isSelected()){
+                return buttons[i].getText();
+            }
+        }
+          return null;
     }
 }

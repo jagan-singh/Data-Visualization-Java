@@ -44,7 +44,7 @@ public class RandomClusterer extends Clusterer {
 
     @Override
     public synchronized void run() {
-       for (int i = 0; i < maxIterations; i++) {
+       for (int i = 0; i <= maxIterations; i++) {
             dataset.getLocations().forEach((instanceName, location) -> dataset.getLabels().put(instanceName, Integer.toString(RAND.nextInt(numberOfClusters))));
 
            if(!(i == maxIterations)  && ((i % updateInterval) == 0)  ) {

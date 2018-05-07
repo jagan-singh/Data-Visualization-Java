@@ -61,9 +61,8 @@ functionality within the main workspace. -->
         <property name="ALGO_VBOX_TITLE" value="Algorithm Type"/>
         <property name="CLUSTERING" value="Clustering"/>
         <property name="CLASSIFICATION" value="Classification"/>
-        <property name="RANDOM_CLUSTERING" value="Random Clustering"/>
-        <property name="RANDOM_CLASSIFICATION" value="Random Classification"/>
-        <property name="KMEANS_CLUSTERING" value="KMeans Clustering"/>
+        <property name="CLUSTERER" value="Clusterer"/>
+        <property name="CLASSIFIER" value="Classifier"/>
         <property name="MAX_ITERATIONS" value="Max. Iterations:"/>
         <property name="UPDATE_INTERVAL" value="Update Interval:"/>
         <property name="LABELS" value="Labels:"/>
